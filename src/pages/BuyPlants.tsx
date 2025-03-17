@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Filter, Leaf } from "lucide-react";
+import { Search, Filter, Leaf, Truck } from "lucide-react";
 
 // Components
 import PlantCard from "@/components/PlantCard";
