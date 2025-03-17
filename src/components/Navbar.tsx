@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Leaf } from "lucide-react";
+import CartIcon from "@/components/CartIcon";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -68,25 +69,32 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Button
-            className="bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
-          >
-            Contact Us
-          </Button>
+          
+          <div className="flex items-center gap-2">
+            <CartIcon />
+            <Button
+              className="bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
+            >
+              Contact Us
+            </Button>
+          </div>
         </nav>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden flex items-center"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-6 w-6 text-foreground" />
-          ) : (
-            <Menu className="h-6 w-6 text-foreground" />
-          )}
-        </button>
+        {/* Mobile Menu Toggle & Cart Icon */}
+        <div className="md:hidden flex items-center gap-2">
+          <CartIcon />
+          <button
+            className="flex items-center"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6 text-foreground" />
+            ) : (
+              <Menu className="h-6 w-6 text-foreground" />
+            )}
+          </button>
+        </div>
 
         {/* Mobile Menu */}
         <div

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Star } from "lucide-react";
-import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
 
 interface PlantCardProps {
   name: string;
@@ -25,9 +25,17 @@ const PlantCard = ({
   bestSeller = false 
 }: PlantCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    toast.success(`${name} added to cart!`);
+    addItem({
+      id: Math.floor(Math.random() * 1000), // This would be a real ID in a production app
+      name,
+      image,
+      price,
+      category,
+      type: "plant"
+    });
   };
 
   return (
