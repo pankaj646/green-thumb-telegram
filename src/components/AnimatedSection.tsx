@@ -15,7 +15,7 @@ const AnimatedSection = ({
 }: AnimatedSectionProps) => {
   const controls = useAnimation();
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, threshold: 0.1 });
+  const inView = useInView(ref, { once: true });
   
   useEffect(() => {
     if (inView) {
