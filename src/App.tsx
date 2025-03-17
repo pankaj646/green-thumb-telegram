@@ -18,6 +18,7 @@ import Confirmation from "./pages/Confirmation";
 import Fertilizers from "./pages/Fertilizers";
 import Pots from "./pages/Pots";
 import Cart from "./pages/Cart";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 // Layouts
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/fertilizers" element={<Fertilizers />} />
               <Route path="/pots" element={<Pots />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/confirmation" element={<Confirmation />} />
               <Route path="*" element={<NotFound />} />
             </Route>

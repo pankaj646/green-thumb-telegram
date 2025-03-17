@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X, Leaf, Phone, Heart } from "lucide-react";
 import CartIcon from "@/components/CartIcon";
 
 const Navbar = () => {
@@ -26,11 +26,12 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Buy Plants", path: "/buy" },
-    { name: "Rent Plants", path: "/rent" },
-    { name: "Plant Services", path: "/services" },
+    { name: "Plants", path: "/buy" },
     { name: "Fertilizers", path: "/fertilizers" },
     { name: "Pots & Accessories", path: "/pots" },
+    { name: "Rent Plants", path: "/rent" },
+    { name: "Book Plant Care", path: "/services" },
+    { name: "Contact", path: "/contact" },
   ];
 
   return (
@@ -54,7 +55,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -71,12 +72,15 @@ const Navbar = () => {
           ))}
           
           <div className="flex items-center gap-2">
-            <CartIcon />
             <Button
-              className="bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
+              asChild
+              className="bg-leaf-500 hover:bg-leaf-600 text-white px-3 py-1 h-9 transition-all duration-300 hover:shadow-leaf"
             >
-              Contact Us
+              <Link to="/services">
+                <Heart className="mr-1 h-4 w-4" /> Plant Care
+              </Link>
             </Button>
+            <CartIcon />
           </div>
         </nav>
 
@@ -119,9 +123,12 @@ const Navbar = () => {
               </Link>
             ))}
             <Button
-              className="bg-leaf-500 hover:bg-leaf-600 text-white mt-4 w-40 transition-all duration-300 hover:shadow-leaf"
+              asChild
+              className="bg-leaf-500 hover:bg-leaf-600 text-white mt-2 w-40 transition-all duration-300 hover:shadow-leaf"
             >
-              Contact Us
+              <Link to="/services">
+                <Heart className="mr-2 h-4 w-4" /> Plant Care Service
+              </Link>
             </Button>
           </nav>
         </div>
