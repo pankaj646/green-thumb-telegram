@@ -28,6 +28,8 @@ const Navbar = () => {
     { name: "Buy Plants", path: "/buy" },
     { name: "Rent Plants", path: "/rent" },
     { name: "Plant Services", path: "/services" },
+    { name: "Fertilizers", path: "/fertilizers" },
+    { name: "Pots & Accessories", path: "/pots" },
   ];
 
   return (
@@ -51,7 +53,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}

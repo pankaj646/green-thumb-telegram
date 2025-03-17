@@ -12,6 +12,8 @@ import BuyPlants from "./pages/BuyPlants";
 import RentPlants from "./pages/RentPlants";
 import BookServices from "./pages/BookServices";
 import Confirmation from "./pages/Confirmation";
+import Fertilizers from "./pages/Fertilizers";
+import Pots from "./pages/Pots";
 import NotFound from "./pages/NotFound";
 
 // Layouts
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/buy" element={<BuyPlants />} />
             <Route path="/rent" element={<RentPlants />} />
             <Route path="/services" element={<BookServices />} />
+            <Route path="/fertilizers" element={<Fertilizers />} />
+            <Route path="/pots" element={<Pots />} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="*" element={<NotFound />} />
           </Route>
