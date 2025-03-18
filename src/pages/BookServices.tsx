@@ -1,67 +1,134 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Leaf, Clock, Settings, User } from "lucide-react";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { CalendarIcon, Star, CheckCircle, Leaf, Clock, User, CreditCard, MapPin, ChevronDown, ChevronRight } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 // Components
 import AnimatedSection from "@/components/AnimatedSection";
 
 // Services data
-const services = [
+const serviceCategories = [
   {
     id: 1,
-    title: "Plant Health Check",
-    description: "Complete inspection of your plants, diagnosis of issues, and treatment recommendations",
-    price: 499,
-    duration: "1 hour",
-    image: "https://images.unsplash.com/photo-1585444744747-7661b9e0b0ad?q=80&w=1000&auto=format&fit=crop"
+    title: "Basic Maintenance",
+    icon: "🌾",
+    description: "Essential care for your garden including mowing, watering, weeding, and basic pruning services.",
+    startingPrice: 299,
+    image: "https://images.unsplash.com/photo-1589923188651-268a9765e432?q=80&w=2070&auto=format&fit=crop"
   },
   {
     id: 2,
-    title: "Garden Maintenance",
-    description: "Regular pruning, watering, fertilizing, and pest control for your outdoor plants",
-    price: 799,
-    duration: "2 hours",
-    image: "https://images.unsplash.com/photo-1589923188651-268a9765e432?q=80&w=1000&auto=format&fit=crop"
+    title: "Advanced Garden Care",
+    icon: "🌿",
+    description: "Comprehensive care including fertilization, pest control, disease management, and seasonal maintenance.",
+    startingPrice: 399,
+    image: "https://images.unsplash.com/photo-1585444744747-7661b9e0b0ad?q=80&w=2070&auto=format&fit=crop"
   },
   {
     id: 3,
-    title: "Plant Repotting",
-    description: "Professional repotting service including soil assessment and replacement",
-    price: 599,
-    duration: "1 hour",
-    image: "https://images.unsplash.com/photo-1563906267088-b029e7101114?q=80&w=1000&auto=format&fit=crop"
+    title: "Specialized Services",
+    icon: "🎍",
+    description: "Expert services for specific plant types including bonsai maintenance, orchid care, and exotic plant management.",
+    startingPrice: 499,
+    image: "https://images.unsplash.com/photo-1599629954294-14df9f8238da?q=80&w=2070&auto=format&fit=crop"
   },
   {
     id: 4,
-    title: "Indoor Plant Styling",
-    description: "Expert arrangement and styling of your indoor plants for aesthetic appeal",
-    price: 1299,
-    duration: "3 hours",
-    image: "https://images.unsplash.com/photo-1545165375-f1c0d3b53388?q=80&w=1000&auto=format&fit=crop"
+    title: "Custom & Commercial Care",
+    icon: "🏡",
+    description: "Tailored maintenance plans for residential gardens, office spaces, and commercial landscape projects.",
+    startingPrice: 599,
+    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=2074&auto=format&fit=crop"
+  },
+  {
+    id: 5,
+    title: "New Garden Creation",
+    icon: "🦋",
+    description: "Design and implementation of new gardens, including layout planning, soil preparation, and plant selection.",
+    startingPrice: 799,
+    image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?q=80&w=2070&auto=format&fit=crop"
+  }
+];
+
+const pricingTable = [
+  { service: "Lawn Mowing", duration: "1-2 hours", hourlyRate: 299 },
+  { service: "Weeding & Cleaning", duration: "2-3 hours", hourlyRate: 349 },
+  { service: "Plant Pruning", duration: "1-3 hours", hourlyRate: 399 },
+  { service: "Garden Design Consultation", duration: "1-2 hours", hourlyRate: 499 },
+  { service: "Complete Garden Overhaul", duration: "4-8 hours", hourlyRate: 599 }
+];
+
+const testimonials = [
+  {
+    name: "Priya Sharma",
+    rating: 5,
+    comment: "The garden expert arrived on time and completely transformed my neglected backyard. Very professional service!",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop"
+  },
+  {
+    name: "Amit Patel",
+    rating: 5,
+    comment: "I've been using their weekly maintenance service for 3 months and my garden has never looked better. Highly recommended!",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop"
+  },
+  {
+    name: "Riya Gupta",
+    rating: 4,
+    comment: "Great service at a reasonable price. The gardener was very knowledgeable about local plants and gave great tips.",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop"
+  }
+];
+
+const faqs = [
+  {
+    question: "How does hourly pricing work?",
+    answer: "Our hourly pricing begins from the time the gardener arrives at your location. You are charged only for the actual time spent working on your garden. There's a minimum booking duration of 1 hour, and after that, we charge in 30-minute increments."
+  },
+  {
+    question: "Do you provide tools & materials?",
+    answer: "Yes, our gardeners come fully equipped with all necessary tools for the booked service. If specific materials like fertilizers, seeds, or plants are required, you can either provide them or we can source them for you at an additional cost."
+  },
+  {
+    question: "Can I book a regular gardener for weekly care?",
+    answer: "Absolutely! We offer weekly, bi-weekly, and monthly maintenance plans with the same gardener assigned to your property for consistency. Regular bookings receive a 10% discount on our standard hourly rates."
+  },
+  {
+    question: "What areas in Siliguri do you cover?",
+    answer: "We provide gardening services throughout Siliguri and surrounding areas including Matigara, Bagdogra, Naxalbari, and up to Sukna. For locations outside these areas, additional travel charges may apply."
+  },
+  {
+    question: "What if I'm not satisfied with the service?",
+    answer: "Customer satisfaction is our priority. If you're not completely satisfied with the service provided, please contact us within 24 hours and we'll arrange for the gardener to return and address any issues at no additional cost."
   }
 ];
 
 const BookServices = () => {
   const navigate = useNavigate();
-  const [selectedService, setSelectedService] = useState<number | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   
   // Form state
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
     address: "",
-    date: "",
+    service: "",
     time: "",
     notes: ""
   });
@@ -84,9 +151,14 @@ const BookServices = () => {
   };
 
   // Handle service selection
-  const handleServiceSelect = (serviceId: number) => {
-    setSelectedService(serviceId);
-    setShowForm(true);
+  const handleServiceSelect = (categoryId: number) => {
+    setSelectedCategory(categoryId);
+    setShowBookingForm(true);
+    // Scroll to booking form
+    setTimeout(() => {
+      const bookingElement = document.getElementById('booking-form');
+      bookingElement?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   // Handle form submission
@@ -94,30 +166,28 @@ const BookServices = () => {
     e.preventDefault();
     
     // Form validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.date || !formData.time) {
+    if (!formData.name || !formData.phone || !formData.address || !formData.service || !date || !formData.time) {
       toast.error("Please fill in all required fields");
       return;
     }
     
     // Show success toast
-    toast.success("Your service booking request has been received!");
+    toast.success("Your gardening service booking has been confirmed!");
     
     // Navigate to confirmation page
     setTimeout(() => {
       navigate("/confirmation", { 
         state: { 
-          type: "service",
-          service: selectedService ? services.find(service => service.id === selectedService) : null,
+          type: "gardening-service",
+          service: selectedCategory 
+            ? serviceCategories.find(category => category.id === selectedCategory)?.title 
+            : formData.service,
+          date: date ? format(date, "MMMM d, yyyy") : "",
+          time: formData.time,
           formData
         } 
       });
     }, 1000);
-  };
-
-  // Handle back button
-  const handleBack = () => {
-    setShowForm(false);
-    setSelectedService(null);
   };
 
   return (
@@ -127,189 +197,207 @@ const BookServices = () => {
         <AnimatedSection className="mb-12">
           <div className="text-center max-w-3xl mx-auto">
             <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
-              Plant Services
+              Garden Services
             </Badge>
             <h1 className="text-3xl md:text-5xl font-serif font-medium mt-4 mb-6">
-              Your Plants, Our Care
+              Expert Garden Care in Siliguri
             </h1>
             <p className="text-muted-foreground">
-              Professional plant maintenance at your doorstep. Book a plant care expert for watering, 
-              pruning, repotting, or pest control on an hourly basis.
+              Book professional gardeners by the hour for all your garden maintenance needs. 
+              From basic lawn mowing to complete garden transformations, our local experts 
+              have you covered.
             </p>
           </div>
         </AnimatedSection>
 
-        {/* Services Section */}
-        {!showForm && (
-          <AnimatedSection>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {services.map((service) => (
-                <Card key={service.id} className="overflow-hidden border-leaf-100 shadow-soft">
-                  <CardContent className="p-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2">
-                      <div className="h-48 md:h-auto">
-                        <img
-                          src={service.image}
-                          alt={service.title}
-                          className="w-full h-full object-cover"
-                        />
+        {/* Service Categories Section */}
+        <AnimatedSection>
+          <div className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              🌱 Choose Your Garden Service
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {serviceCategories.map((category) => (
+                <Card key={category.id} className="overflow-hidden border-leaf-100 shadow-soft hover:shadow-soft-lg transition-all duration-300">
+                  <div className="h-48 relative overflow-hidden">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                      <span className="text-4xl">{category.icon}</span>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="font-serif text-xl font-medium mb-2">{category.title}</h3>
+                    <p className="text-muted-foreground mb-4">{category.description}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-leaf-700 font-medium">
+                        From ₹{category.startingPrice}/hr
                       </div>
-                      <div className="p-6 flex flex-col justify-center">
-                        <h3 className="font-serif text-xl font-medium mb-2">{service.title}</h3>
-                        <p className="text-muted-foreground mb-3">{service.description}</p>
-                        <div className="flex items-center mb-4">
-                          <Clock className="h-4 w-4 text-leaf-500 mr-2" />
-                          <span className="text-sm text-muted-foreground">{service.duration}</span>
-                          <span className="mx-2 text-muted-foreground">•</span>
-                          <span className="text-sm font-medium">₹{service.price}</span>
-                        </div>
-                        <Button 
-                          onClick={() => handleServiceSelect(service.id)}
-                          className="mt-auto border-leaf-200 hover:bg-leaf-50 text-leaf-700"
-                          variant="outline"
-                        >
-                          Book This Service
-                        </Button>
-                      </div>
+                      <Button 
+                        onClick={() => handleServiceSelect(category.id)}
+                        className="gap-2 border-leaf-200 hover:bg-leaf-50 text-leaf-700"
+                        variant="outline"
+                      >
+                        Book Now <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Pricing Table Section */}
+        <AnimatedSection>
+          <div className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              💰 Transparent Hourly Pricing for Every Service
+            </h2>
             
-            <div className="mt-12 bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-8">
-              <h3 className="font-serif text-2xl font-medium mb-6 text-center">
-                Why Choose Our Plant Services?
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="flex flex-col items-center text-center">
-                  <div className="bg-leaf-50 rounded-full p-4 mb-4">
-                    <User className="h-6 w-6 text-leaf-600" />
-                  </div>
-                  <h4 className="font-medium mb-2">Expert Specialists</h4>
-                  <p className="text-muted-foreground">Trained plant care professionals with years of experience</p>
-                </div>
-                
-                <div className="flex flex-col items-center text-center">
-                  <div className="bg-leaf-50 rounded-full p-4 mb-4">
-                    <Settings className="h-6 w-6 text-leaf-600" />
-                  </div>
-                  <h4 className="font-medium mb-2">Professional Tools</h4>
-                  <p className="text-muted-foreground">We bring all necessary equipment and supplies</p>
-                </div>
-                
-                <div className="flex flex-col items-center text-center">
-                  <div className="bg-leaf-50 rounded-full p-4 mb-4">
-                    <Leaf className="h-6 w-6 text-leaf-600" />
-                  </div>
-                  <h4 className="font-medium mb-2">Plant Health Guarantee</h4>
-                  <p className="text-muted-foreground">Follow-up visits to ensure your plants are thriving</p>
-                </div>
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Service Type</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead>Hourly Rate</TableHead>
+                      <TableHead className="text-right">Book</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pricingTable.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{item.service}</TableCell>
+                        <TableCell>{item.duration}</TableCell>
+                        <TableCell>₹{item.hourlyRate}/hr</TableCell>
+                        <TableCell className="text-right">
+                          <Button 
+                            onClick={() => {
+                              handleSelectChange("service", item.service);
+                              setShowBookingForm(true);
+                              // Scroll to booking form
+                              setTimeout(() => {
+                                const bookingElement = document.getElementById('booking-form');
+                                bookingElement?.scrollIntoView({ behavior: 'smooth' });
+                              }, 100);
+                            }}
+                            variant="outline" 
+                            size="sm"
+                            className="border-leaf-200 hover:bg-leaf-50 text-leaf-700"
+                          >
+                            Book
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="p-4 border-t border-leaf-100 flex justify-center">
+                <Button 
+                  onClick={() => {
+                    setShowBookingForm(true);
+                    // Scroll to booking form
+                    setTimeout(() => {
+                      const bookingElement = document.getElementById('booking-form');
+                      bookingElement?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="gap-2 bg-leaf-500 hover:bg-leaf-600 text-white"
+                >
+                  Get a Custom Quote <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-          </AnimatedSection>
-        )}
+          </div>
+        </AnimatedSection>
 
-        {/* Booking Form */}
-        {showForm && selectedService && (
-          <AnimatedSection>
+        {/* Booking Form Section */}
+        <AnimatedSection>
+          <div id="booking-form" className="mb-16 scroll-mt-24">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              📅 Book a Gardening Expert in Siliguri
+            </h2>
+            
             <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-8">
-              <div className="mb-6">
-                <Button 
-                  variant="ghost" 
-                  className="text-muted-foreground mb-4"
-                  onClick={handleBack}
-                >
-                  ← Back to services
-                </Button>
-                <h3 className="font-serif text-2xl font-medium mb-2">
-                  Book {services.find(service => service.id === selectedService)?.title}
-                </h3>
-                <p className="text-muted-foreground">
-                  {services.find(service => service.id === selectedService)?.description}
-                </p>
-                <div className="flex items-center mt-2">
-                  <Clock className="h-4 w-4 text-leaf-500 mr-2" />
-                  <span className="text-sm text-muted-foreground">
-                    {services.find(service => service.id === selectedService)?.duration}
-                  </span>
-                  <span className="mx-2 text-muted-foreground">•</span>
-                  <span className="text-sm font-medium">
-                    ₹{services.find(service => service.id === selectedService)?.price}
-                  </span>
-                </div>
-              </div>
-              
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Personal Information */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Step 1: Select Service */}
                   <div className="space-y-4">
-                    <h4 className="font-medium text-lg mb-4">Personal Information</h4>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input 
-                        id="name" 
-                        name="name" 
-                        placeholder="Your full name" 
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
+                    <div className="bg-leaf-50 rounded-full w-10 h-10 flex items-center justify-center mb-2">
+                      <span className="font-medium text-leaf-700">1</span>
                     </div>
+                    <h3 className="text-xl font-medium">Select a Service</h3>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        placeholder="Your email address" 
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
-                      <Input 
-                        id="phone" 
-                        name="phone" 
-                        placeholder="Your phone number" 
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Service Address *</Label>
-                      <Input 
-                        id="address" 
-                        name="address" 
-                        placeholder="Where should we provide the service?" 
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <Label htmlFor="service">Service Type *</Label>
+                      <Select 
+                        onValueChange={(value) => handleSelectChange("service", value)}
+                        defaultValue={formData.service}
+                        value={formData.service}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a service" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {serviceCategories.map(category => (
+                            <SelectItem key={category.id} value={category.title}>
+                              {category.icon} {category.title}
+                            </SelectItem>
+                          ))}
+                          {pricingTable.map((item, index) => (
+                            <SelectItem key={`service-${index}`} value={item.service}>
+                              {item.service}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   
-                  {/* Service Details */}
+                  {/* Step 2: Pick Date & Time */}
                   <div className="space-y-4">
-                    <h4 className="font-medium text-lg mb-4">Service Details</h4>
+                    <div className="bg-leaf-50 rounded-full w-10 h-10 flex items-center justify-center mb-2">
+                      <span className="font-medium text-leaf-700">2</span>
+                    </div>
+                    <h3 className="text-xl font-medium">Pick Date & Time</h3>
                     
                     <div className="space-y-2">
                       <Label htmlFor="date">Preferred Date *</Label>
-                      <Input 
-                        id="date" 
-                        name="date" 
-                        type="date" 
-                        value={formData.date}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !date && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date ? format(date, "PPP") : <span>Select a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 pointer-events-auto">
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            initialFocus
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date < today;
+                            }}
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     
                     <div className="space-y-2">
@@ -329,43 +417,219 @@ const BookServices = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+                  
+                  {/* Step 3: Contact Details */}
+                  <div className="space-y-4">
+                    <div className="bg-leaf-50 rounded-full w-10 h-10 flex items-center justify-center mb-2">
+                      <span className="font-medium text-leaf-700">3</span>
+                    </div>
+                    <h3 className="text-xl font-medium">Contact Details</h3>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="notes">Special Instructions</Label>
-                      <Textarea 
-                        id="notes" 
-                        name="notes" 
-                        placeholder="Any specific requirements or details about your plants" 
-                        value={formData.notes}
+                      <Label htmlFor="name">Full Name *</Label>
+                      <Input 
+                        id="name" 
+                        name="name" 
+                        placeholder="Your full name" 
+                        value={formData.name}
                         onChange={handleInputChange}
-                        className="resize-none"
-                        rows={4}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Input 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="Your phone number" 
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Address in Siliguri *</Label>
+                      <Input 
+                        id="address" 
+                        name="address" 
+                        placeholder="Your address" 
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        required
                       />
                     </div>
                   </div>
                 </div>
                 
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Special Instructions</Label>
+                  <Textarea 
+                    id="notes" 
+                    name="notes" 
+                    placeholder="Any specific requirements or details about your garden" 
+                    value={formData.notes}
+                    onChange={handleInputChange}
+                    className="resize-none h-24"
+                  />
+                </div>
+                
                 <Button 
                   type="submit"
-                  className="w-full mt-6 bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
+                  className="w-full md:w-auto md:px-12 bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
                 >
-                  Book Service
+                  Book Garden Service
                 </Button>
               </form>
             </div>
-          </AnimatedSection>
-        )}
+          </div>
+        </AnimatedSection>
+
+        {/* Why Choose Us Section */}
+        <AnimatedSection>
+          <div className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              🌍 Why Book Gardening Services with Us?
+            </h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 flex flex-col items-center text-center">
+                <div className="bg-leaf-50 rounded-full p-4 mb-4">
+                  <User className="h-6 w-6 text-leaf-600" />
+                </div>
+                <h3 className="font-medium mb-2">Trained & Verified Gardeners</h3>
+                <p className="text-sm text-muted-foreground">Every gardener is background checked and skilled in plant care</p>
+              </div>
+              
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 flex flex-col items-center text-center">
+                <div className="bg-leaf-50 rounded-full p-4 mb-4">
+                  <Clock className="h-6 w-6 text-leaf-600" />
+                </div>
+                <h3 className="font-medium mb-2">Flexible Hourly Pricing</h3>
+                <p className="text-sm text-muted-foreground">Pay only for the time you need, no hidden charges</p>
+              </div>
+              
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 flex flex-col items-center text-center">
+                <div className="bg-leaf-50 rounded-full p-4 mb-4">
+                  <CreditCard className="h-6 w-6 text-leaf-600" />
+                </div>
+                <h3 className="font-medium mb-2">Easy Booking & Payment</h3>
+                <p className="text-sm text-muted-foreground">Simple booking process with multiple payment options</p>
+              </div>
+              
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 flex flex-col items-center text-center">
+                <div className="bg-leaf-50 rounded-full p-4 mb-4">
+                  <MapPin className="h-6 w-6 text-leaf-600" />
+                </div>
+                <h3 className="font-medium mb-2">Local Experts in Siliguri</h3>
+                <p className="text-sm text-muted-foreground">Gardeners who understand local climate and plant needs</p>
+              </div>
+              
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 flex flex-col items-center text-center">
+                <div className="bg-leaf-50 rounded-full p-4 mb-4">
+                  <Leaf className="h-6 w-6 text-leaf-600" />
+                </div>
+                <h3 className="font-medium mb-2">Eco-Friendly Practices</h3>
+                <p className="text-sm text-muted-foreground">Sustainable gardening methods that protect the environment</p>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Testimonials Section */}
+        <AnimatedSection>
+          <div className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              💬 What Our Customers Say
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.map((testimonial, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6"
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                      <img 
+                        src={testimonial.image} 
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium">{testimonial.name}</h4>
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground">"{testimonial.comment}"</p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 flex justify-center">
+              <div className="bg-muted/30 rounded-full px-6 py-3 flex items-center">
+                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400 mr-2" />
+                <span className="font-medium mr-2">4.8/5</span>
+                <span className="text-muted-foreground">based on 120+ reviews</span>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* FAQ Section */}
+        <AnimatedSection>
+          <div className="mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-8 text-center">
+              ❓ Frequently Asked Questions
+            </h2>
+            
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-leaf-100 shadow-soft p-6 md:p-8">
+              <Accordion type="single" collapsible className="w-full">
+                {faqs.map((faq, index) => (
+                  <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-left">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
+        </AnimatedSection>
         
-        {/* Additional Information */}
-        <AnimatedSection className="mt-16">
-          <div className="bg-muted/50 rounded-xl p-8 text-center">
-            <h3 className="font-serif text-xl font-medium mb-4">Need a Custom Plant Care Solution?</h3>
+        {/* CTA Section */}
+        <AnimatedSection>
+          <div className="bg-leaf-50 rounded-xl border border-leaf-100 shadow-soft p-8 text-center">
+            <h2 className="text-2xl font-serif font-medium mb-4">Ready to Transform Your Garden?</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              We also offer custom plant care packages for homes, offices, and commercial spaces.
-              Contact us to discuss your specific requirements.
+              Book a professional gardener today and enjoy a beautifully maintained garden without the hard work.
+              Our experts are just a click away.
             </p>
-            <Button className="bg-leaf-500 hover:bg-leaf-600 text-white">
-              Contact for Custom Services
+            <Button 
+              onClick={() => {
+                setShowBookingForm(true);
+                // Scroll to booking form
+                setTimeout(() => {
+                  const bookingElement = document.getElementById('booking-form');
+                  bookingElement?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+              className="bg-leaf-500 hover:bg-leaf-600 text-white px-8"
+            >
+              Book Now
             </Button>
           </div>
         </AnimatedSection>
