@@ -11,10 +11,16 @@ export interface CategoryCircleProps {
 }
 
 const CategoryCircle = ({ name, image, path, icon }: CategoryCircleProps) => {
+  // Scroll to top when category is clicked
+  const handleClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <Link 
       to={path} 
       className="flex flex-col items-center justify-center group"
+      onClick={handleClick}
     >
       <div className="relative mb-3 transition-all duration-300 group-hover:scale-105">
         <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-leaf-200 bg-white shadow-md group-hover:shadow-leaf group-hover:border-leaf-300 transition-all duration-300">

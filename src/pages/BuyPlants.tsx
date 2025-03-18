@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["air-purifying", "low-light", "flowering"],
     rating: 4.8,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Purifies air", "Removes toxins", "Produces oxygen"],
+    careLevel: "Easy"
   },
   {
     id: 2,
@@ -32,7 +34,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["air-purifying", "low-maintenance", "low-light"],
     rating: 4.9,
-    bestSeller: true
+    bestSeller: true,
+    benefits: ["Filters indoor air", "Night oxygen producer", "Removes formaldehyde"],
+    careLevel: "Very Easy"
   },
   {
     id: 3,
@@ -42,7 +46,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["decorative", "medium-light", "statement"],
     rating: 4.7,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Air purifying", "Statement piece", "Fast growing"],
+    careLevel: "Medium"
   },
   {
     id: 4,
@@ -52,7 +58,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["decorative", "bright-light", "statement"],
     rating: 4.6,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Statement plant", "Improves air quality", "Aesthetic appeal"],
+    careLevel: "Challenging"
   },
   {
     id: 5,
@@ -62,7 +70,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["air-purifying", "low-maintenance", "hanging"],
     rating: 4.8,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Removes toxins", "Versatile growing", "Low maintenance"],
+    careLevel: "Very Easy"
   },
   {
     id: 6,
@@ -72,17 +82,21 @@ const plantsData = [
     category: "Indoor",
     tags: ["air-purifying", "low-maintenance", "low-light"],
     rating: 4.7,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Drought resistant", "Air purifying", "Low light tolerant"],
+    careLevel: "Very Easy"
   },
   {
     id: 7,
     name: "Aloe Vera",
     image: "https://images.unsplash.com/photo-1596547609652-9cf9d149a29f?q=80&w=1000&auto=format&fit=crop",
     price: 199,
-    category: "Indoor",
+    category: "Succulents & Cactus",
     tags: ["medicinal", "succulent", "medium-light"],
     rating: 4.6,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Medicinal properties", "Air purifying", "Healing gel"],
+    careLevel: "Easy"
   },
   {
     id: 8,
@@ -92,7 +106,9 @@ const plantsData = [
     category: "Indoor",
     tags: ["air-purifying", "medium-maintenance", "statement"],
     rating: 4.5,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Removes toxins", "Oxygen producer", "Low allergen"],
+    careLevel: "Medium"
   },
   {
     id: 9,
@@ -102,17 +118,21 @@ const plantsData = [
     category: "Outdoor",
     tags: ["flowering", "fragrant", "full-sun"],
     rating: 4.7,
-    bestSeller: true
+    bestSeller: true,
+    benefits: ["Beautiful blooms", "Pleasant fragrance", "Attracts pollinators"],
+    careLevel: "Medium"
   },
   {
     id: 10,
-    name: "Bonsai Tree",
+    name: "Juniper Bonsai",
     image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1000&auto=format&fit=crop",
     price: 1499,
-    category: "Indoor",
+    category: "Bonsai Plants",
     tags: ["decorative", "medium-maintenance", "statement"],
     rating: 4.9,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Artistic value", "Stress reducer", "Long-living"],
+    careLevel: "Challenging"
   },
   {
     id: 11,
@@ -122,7 +142,9 @@ const plantsData = [
     category: "Outdoor",
     tags: ["flowering", "fragrant", "climbing"],
     rating: 4.6,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Aromatic flowers", "Attracts pollinators", "Decorative"],
+    careLevel: "Medium"
   },
   {
     id: 12,
@@ -132,7 +154,57 @@ const plantsData = [
     category: "Outdoor",
     tags: ["flowering", "full-sun", "low-maintenance"],
     rating: 4.4,
-    bestSeller: false
+    bestSeller: false,
+    benefits: ["Pest repellent", "Bright blooms", "Easy growing"],
+    careLevel: "Easy"
+  },
+  {
+    id: 13,
+    name: "Jade Plant",
+    image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?q=80&w=1000&auto=format&fit=crop",
+    price: 249,
+    category: "Succulents & Cactus",
+    tags: ["succulent", "low-maintenance", "good-luck"],
+    rating: 4.5,
+    bestSeller: false,
+    benefits: ["Symbol of prosperity", "Long-living", "Low water needs"],
+    careLevel: "Easy"
+  },
+  {
+    id: 14,
+    name: "Prickly Pear Cactus",
+    image: "https://images.unsplash.com/photo-1551888419-7b7a520fe0ca?q=80&w=1000&auto=format&fit=crop",
+    price: 299,
+    category: "Succulents & Cactus",
+    tags: ["cactus", "edible", "drought-resistant"],
+    rating: 4.3,
+    bestSeller: false,
+    benefits: ["Edible fruits", "Drought tolerant", "Unique appearance"],
+    careLevel: "Very Easy"
+  },
+  {
+    id: 15,
+    name: "Chinese Elm Bonsai",
+    image: "https://images.unsplash.com/photo-1512428813834-c702c7702b78?q=80&w=1000&auto=format&fit=crop",
+    price: 1299,
+    category: "Bonsai Plants",
+    tags: ["bonsai", "indoor-outdoor", "deciduous"],
+    rating: 4.8,
+    bestSeller: true,
+    benefits: ["Adaptable", "Beautiful leaf structure", "Good for beginners"],
+    careLevel: "Medium"
+  },
+  {
+    id: 16,
+    name: "Ficus Bonsai",
+    image: "https://images.unsplash.com/photo-1599598177991-ec67b5c37318?q=80&w=1000&auto=format&fit=crop",
+    price: 1099,
+    category: "Bonsai Plants",
+    tags: ["bonsai", "indoor", "evergreen"],
+    rating: 4.7,
+    bestSeller: false,
+    benefits: ["Tropical appearance", "Air purifying", "Year-round foliage"],
+    careLevel: "Medium"
   }
 ];
 
@@ -143,13 +215,21 @@ const BuyPlants = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Filter plants based on search, category, price, and tags
   const filteredPlants = plantsData.filter((plant) => {
     // Search query filter
     const matchesSearch = plant.name.toLowerCase().includes(searchQuery.toLowerCase());
     
     // Category filter (tab)
-    const matchesCategory = activeTab === "all" || plant.category.toLowerCase() === activeTab.toLowerCase();
+    const matchesCategory = activeTab === "all" || 
+                           (activeTab === "Flowering" && plant.tags.includes("flowering")) ||
+                           (activeTab === "Low Maintenance" && plant.tags.includes("low-maintenance")) ||
+                           plant.category.toLowerCase() === activeTab.toLowerCase();
     
     // Price range filter
     const matchesPrice = plant.price >= priceRange[0] && plant.price <= priceRange[1];
@@ -300,22 +380,28 @@ const BuyPlants = () => {
               <TabsTrigger value="all">All Plants</TabsTrigger>
               <TabsTrigger value="Indoor">Indoor</TabsTrigger>
               <TabsTrigger value="Outdoor">Outdoor</TabsTrigger>
+              <TabsTrigger value="Succulents & Cactus">Succulents & Cactus</TabsTrigger>
+              <TabsTrigger value="Bonsai Plants">Bonsai Plants</TabsTrigger>
               <TabsTrigger value="Flowering">Flowering</TabsTrigger>
               <TabsTrigger value="Low Maintenance">Low Maintenance</TabsTrigger>
             </TabsList>
             
+            {/* All Plants Tab */}
             <TabsContent value="all" className="mt-8">
               {filteredPlants.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {filteredPlants.map((plant) => (
                     <PlantCard
                       key={plant.id}
+                      id={plant.id}
                       name={plant.name}
                       image={plant.image}
                       price={plant.price}
                       category={plant.category}
                       rating={plant.rating}
                       bestSeller={plant.bestSeller}
+                      benefits={plant.benefits}
+                      careLevel={plant.careLevel}
                     />
                   ))}
                 </div>
@@ -338,73 +424,27 @@ const BuyPlants = () => {
               )}
             </TabsContent>
             
-            <TabsContent value="Indoor" className="mt-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredPlants.map((plant) => (
-                  <PlantCard
-                    key={plant.id}
-                    name={plant.name}
-                    image={plant.image}
-                    price={plant.price}
-                    category={plant.category}
-                    rating={plant.rating}
-                    bestSeller={plant.bestSeller}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="Outdoor" className="mt-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredPlants.map((plant) => (
-                  <PlantCard
-                    key={plant.id}
-                    name={plant.name}
-                    image={plant.image}
-                    price={plant.price}
-                    category={plant.category}
-                    rating={plant.rating}
-                    bestSeller={plant.bestSeller}
-                  />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="Flowering" className="mt-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredPlants
-                  .filter((plant) => plant.tags.includes("flowering"))
-                  .map((plant) => (
+            {/* Category Tabs */}
+            {["Indoor", "Outdoor", "Succulents & Cactus", "Bonsai Plants", "Flowering", "Low Maintenance"].map((category) => (
+              <TabsContent key={category} value={category} className="mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {filteredPlants.map((plant) => (
                     <PlantCard
                       key={plant.id}
+                      id={plant.id}
                       name={plant.name}
                       image={plant.image}
                       price={plant.price}
                       category={plant.category}
                       rating={plant.rating}
                       bestSeller={plant.bestSeller}
+                      benefits={plant.benefits}
+                      careLevel={plant.careLevel}
                     />
                   ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="Low Maintenance" className="mt-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredPlants
-                  .filter((plant) => plant.tags.includes("low-maintenance"))
-                  .map((plant) => (
-                    <PlantCard
-                      key={plant.id}
-                      name={plant.name}
-                      image={plant.image}
-                      price={plant.price}
-                      category={plant.category}
-                      rating={plant.rating}
-                      bestSeller={plant.bestSeller}
-                    />
-                  ))}
-              </div>
-            </TabsContent>
+                </div>
+              </TabsContent>
+            ))}
           </Tabs>
           
           {/* Details Section */}

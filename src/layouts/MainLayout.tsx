@@ -10,6 +10,9 @@ const MainLayout = () => {
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   
   useEffect(() => {
+    // Scroll to top when location changes
+    window.scrollTo(0, 0);
+    
     setIsPageTransitioning(true);
     const timer = setTimeout(() => setIsPageTransitioning(false), 100);
     return () => clearTimeout(timer);
