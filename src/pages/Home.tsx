@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Leaf, Gift, Clock, User, ShoppingBag, Calendar, Truck } from "lucide-react";
+import { Leaf, Gift, Clock, User, ShoppingBag, Calendar, Truck, Heart, Package, Star, Sparkle, TreesIcon, Flower } from "lucide-react";
 
 // Custom components
 import AnimatedSection from "@/components/AnimatedSection";
@@ -222,6 +222,217 @@ const Home = () => {
               category="Indoor"
               rating={4.6}
             />
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* New Arrivals Section */}
+      <AnimatedSection className="py-20 px-6 md:px-12 bg-gradient-to-b from-white to-leaf-50/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+            <div>
+              <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
+                Just Arrived
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-serif font-medium mt-4 mb-2">
+                New Arrivals
+              </h2>
+              <p className="text-muted-foreground max-w-xl">
+                Discover our latest additions to the plant family
+              </p>
+            </div>
+            <Button asChild variant="outline" className="mt-4 md:mt-0 border-leaf-200 hover:bg-leaf-50 text-leaf-700">
+              <Link to="/buy">Explore All</Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <PlantCard 
+              name="Calathea Orbifolia"
+              image="https://images.unsplash.com/photo-1637967886160-fd71a17a9d0c?q=80&w=1000&auto=format&fit=crop"
+              price={499}
+              category="Indoor"
+              rating={4.7}
+              isNew
+            />
+            <PlantCard 
+              name="String of Pearls"
+              image="https://images.unsplash.com/photo-1622576407952-2c1eeac3b1d6?q=80&w=1000&auto=format&fit=crop"
+              price={349}
+              category="Hanging"
+              rating={4.8}
+              isNew
+            />
+            <PlantCard 
+              name="Alocasia Polly"
+              image="https://images.unsplash.com/photo-1632207538509-cc90944e0388?q=80&w=1000&auto=format&fit=crop"
+              price={649}
+              category="Indoor"
+              rating={4.9}
+              isNew
+            />
+            <PlantCard 
+              name="Pink Anthurium"
+              image="https://images.unsplash.com/photo-1593691509543-c55fb32d8de5?q=80&w=1000&auto=format&fit=crop"
+              price={799}
+              category="Flowering"
+              rating={4.7}
+              isNew
+            />
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Plant Care Service Section */}
+      <AnimatedSection className="py-20 px-6 md:px-12 bg-cream-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-leaf-pattern opacity-5 pointer-events-none" />
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="order-2 lg:order-1 relative">
+              <img 
+                src="https://images.unsplash.com/photo-1623241899289-e9a64204c1e2?q=80&w=1000&auto=format&fit=crop" 
+                alt="Plant care expert" 
+                className="rounded-2xl shadow-xl object-cover h-[500px] w-full"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-soft z-20 border border-leaf-100 animate-float max-w-[240px]">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-leaf-500 rounded-full p-2">
+                    <Heart className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="font-medium text-leaf-700">Plant Care Experts</p>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Our professionals have 5+ years of experience in plant care and maintenance
+                </p>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2 space-y-6">
+              <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
+                Professional Services
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-serif font-medium tracking-tight leading-tight">
+                Expert Plant Care at Your <span className="text-leaf-600">Doorstep</span>
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Our expert horticulturists visit your home or office to provide professional plant care services, ensuring your green friends thrive.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-leaf-100 rounded-full p-2">
+                    <Leaf className="h-5 w-5 text-leaf-600" />
+                  </div>
+                  <p className="font-medium">Plant Health Assessment</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-leaf-100 rounded-full p-2">
+                    <Flower className="h-5 w-5 text-leaf-600" />
+                  </div>
+                  <p className="font-medium">Disease Treatment</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-leaf-100 rounded-full p-2">
+                    <TreesIcon className="h-5 w-5 text-leaf-600" />
+                  </div>
+                  <p className="font-medium">Pruning & Maintenance</p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <Button asChild size="lg" className="bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf">
+                  <Link to="/services">
+                    <Heart className="mr-2 h-5 w-5" /> Book Plant Care Service
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Seasonal Offers Section */}
+      <AnimatedSection className="py-20 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
+              Limited Time
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-serif font-medium mt-4 mb-6">
+              Seasonal Offers
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Take advantage of our special seasonal discounts and bundles
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card className="bg-gradient-to-br from-soil-50 to-cream-100 border-leaf-100 shadow-soft overflow-hidden group">
+              <CardContent className="p-8 flex flex-col md:flex-row gap-6 items-center">
+                <div className="relative w-full md:w-1/3 aspect-square flex-shrink-0">
+                  <div className="absolute inset-0 bg-white/50 rounded-full"></div>
+                  <div className="absolute inset-2 bg-white/80 rounded-full"></div>
+                  <img 
+                    src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Monsoon Plant Bundle" 
+                    className="absolute inset-4 w-[calc(100%-32px)] h-[calc(100%-32px)] object-cover rounded-full"
+                  />
+                  <div className="absolute -top-3 -right-3 bg-cream-500 rounded-full p-3 shadow-md rotate-12">
+                    <Star className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-serif font-medium mb-3">Monsoon Plant Bundle</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Get 3 monsoon-friendly plants with a complimentary ceramic pot and organic fertilizer.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge className="bg-leaf-100 text-leaf-700 hover:bg-leaf-200">30% OFF</Badge>
+                    <Badge className="bg-white/70 text-leaf-700 hover:bg-white">Free Pot</Badge>
+                    <Badge className="bg-white/70 text-leaf-700 hover:bg-white">Free Fertilizer</Badge>
+                  </div>
+                  <div className="flex items-end gap-2 mb-5">
+                    <span className="text-2xl font-bold text-leaf-600">₹1,499</span>
+                    <span className="text-lg line-through text-muted-foreground">₹2,199</span>
+                  </div>
+                  <Button asChild className="bg-leaf-500 hover:bg-leaf-600 text-white">
+                    <Link to="/buy">Shop Now</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-leaf-50 to-cream-100 border-leaf-100 shadow-soft overflow-hidden group">
+              <CardContent className="p-8 flex flex-col md:flex-row gap-6 items-center">
+                <div className="relative w-full md:w-1/3 aspect-square flex-shrink-0">
+                  <div className="absolute inset-0 bg-white/50 rounded-full"></div>
+                  <div className="absolute inset-2 bg-white/80 rounded-full"></div>
+                  <img 
+                    src="https://images.unsplash.com/photo-1603912699214-92627f304eb6?q=80&w=1000&auto=format&fit=crop" 
+                    alt="Office Greenery Pack" 
+                    className="absolute inset-4 w-[calc(100%-32px)] h-[calc(100%-32px)] object-cover rounded-full"
+                  />
+                  <div className="absolute -top-3 -right-3 bg-leaf-500 rounded-full p-3 shadow-md rotate-12">
+                    <Package className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-serif font-medium mb-3">Office Greenery Pack</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Transform your workspace with 5 air-purifying plants perfect for office environments.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge className="bg-leaf-100 text-leaf-700 hover:bg-leaf-200">25% OFF</Badge>
+                    <Badge className="bg-white/70 text-leaf-700 hover:bg-white">Free Delivery</Badge>
+                    <Badge className="bg-white/70 text-leaf-700 hover:bg-white">Care Guide</Badge>
+                  </div>
+                  <div className="flex items-end gap-2 mb-5">
+                    <span className="text-2xl font-bold text-leaf-600">₹2,299</span>
+                    <span className="text-lg line-through text-muted-foreground">₹2,999</span>
+                  </div>
+                  <Button asChild className="bg-leaf-500 hover:bg-leaf-600 text-white">
+                    <Link to="/buy">Shop Now</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </AnimatedSection>

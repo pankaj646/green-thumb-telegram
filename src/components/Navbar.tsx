@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Leaf, Phone, Heart } from "lucide-react";
+import { Menu, X, Leaf } from "lucide-react";
 import CartIcon from "@/components/CartIcon";
 
 const Navbar = () => {
@@ -71,15 +71,7 @@ const Navbar = () => {
             </Link>
           ))}
           
-          <div className="flex items-center gap-2">
-            <Button
-              asChild
-              className="bg-leaf-500 hover:bg-leaf-600 text-white px-3 py-1 h-9 transition-all duration-300 hover:shadow-leaf"
-            >
-              <Link to="/services">
-                <Heart className="mr-1 h-4 w-4" /> Plant Care
-              </Link>
-            </Button>
+          <div className="flex items-center">
             <CartIcon />
           </div>
         </nav>
@@ -122,14 +114,6 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Button
-              asChild
-              className="bg-leaf-500 hover:bg-leaf-600 text-white mt-2 w-40 transition-all duration-300 hover:shadow-leaf"
-            >
-              <Link to="/services">
-                <Heart className="mr-2 h-4 w-4" /> Plant Care Service
-              </Link>
-            </Button>
           </nav>
         </div>
       </div>
