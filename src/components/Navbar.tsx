@@ -27,8 +27,10 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Plants", path: "/buy" },
+    { name: "Pots", path: "/pots" },
     { name: "Fertilizers", path: "/fertilizers" },
-    { name: "Pots & Accessories", path: "/pots" },
+    { name: "Seeds", path: "/seeds" },
+    { name: "Accessories", path: "/accessories" },
     { name: "Rent Plants", path: "/rent" },
     { name: "Book Plant Care", path: "/services" },
     { name: "Contact", path: "/contact" },

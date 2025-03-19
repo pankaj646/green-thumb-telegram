@@ -16,6 +16,7 @@ import BookServices from "./pages/BookServices";
 import Confirmation from "./pages/Confirmation";
 import Fertilizers from "./pages/Fertilizers";
 import Pots from "./pages/Pots";
+import Seeds from "./pages/Seeds";
 import Accessories from "./pages/Accessories";
 import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/services" element={<BookServices />} />
               <Route path="/fertilizers" element={<Fertilizers />} />
               <Route path="/pots" element={<Pots />} />
+              <Route path="/seeds" element={<Seeds />} />
               <Route path="/accessories" element={<Accessories />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/contact" element={<Contact />} />
