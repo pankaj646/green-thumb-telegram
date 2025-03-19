@@ -1,17 +1,15 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { 
   Carousel, 
   CarouselContent, 
   CarouselItem, 
-  CarouselNext, 
-  CarouselPrevious 
+  CarouselApi
 } from "@/components/ui/carousel";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import type { CarouselApi } from "@/components/ui/carousel";
 
 interface Item {
   name: string;
@@ -45,18 +43,16 @@ const AutoScrollCarousel = ({
   interval = 3000,
   bgClass = ""
 }: AutoScrollCarouselProps) => {
-  const [api, setApi] = useRef<CarouselApi>(null);
+  const [api, setApi] = useState<CarouselApi>();
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!api.current) return;
+    if (!api) return;
     
     // Auto-scroll function
     const startAutoScroll = () => {
       intervalRef.current = window.setInterval(() => {
-        if (api.current) {
-          api.current.scrollNext();
-        }
+        api.scrollNext();
       }, interval);
     };
 
@@ -142,10 +138,6 @@ const AutoScrollCarousel = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="absolute -top-16 right-0 flex items-center gap-2">
-              <CarouselPrevious className="relative left-0 right-auto bg-white hover:bg-leaf-50 border-leaf-200" />
-              <CarouselNext className="relative right-0 left-auto bg-white hover:bg-leaf-50 border-leaf-200" />
-            </div>
           </Carousel>
         </div>
       </div>
