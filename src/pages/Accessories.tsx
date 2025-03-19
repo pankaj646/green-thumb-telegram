@@ -1,19 +1,11 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Filter, MessageCircle, ArrowRight, 
-  ShoppingCart, Truck, Leaf, Star
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-import { useCart } from "@/context/CartContext";
-
-// Components
 import AnimatedSection from "@/components/AnimatedSection";
+import AccessoriesHeader from "@/components/accessories/AccessoriesHeader";
+import AccessoriesFilter from "@/components/accessories/AccessoriesFilter";
 import AccessoryCard from "@/components/AccessoryCard";
+import AccessoriesPromotionBanner from "@/components/accessories/AccessoriesPromotionBanner";
+import FloatingContactButton from "@/components/home/FloatingContactButton";
 
 // Accessories product data
 const accessoriesData = [
@@ -92,7 +84,6 @@ const accessoriesData = [
 ];
 
 const Accessories = () => {
-  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("all");
   
   // Filter accessories based on active category
@@ -103,57 +94,9 @@ const Accessories = () => {
   return (
     <div className="pt-28 pb-20 px-6 md:px-12">
       <AnimatedSection className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
-            Shop Accessories
-          </Badge>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium mb-4 mt-3">
-            Essential Accessories for Your Plant Family
-          </h1>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            Complete your plant care routine with our premium selection of gardening tools, plant supports, 
-            watering accessories, grow lights, and decorative items to help your plants thrive.
-          </p>
-          
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <Truck className="h-4 w-4 mr-2" />
-              <span className="text-sm">Fast delivery across Siliguri</span>
-            </div>
-            
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <Leaf className="h-4 w-4 mr-2" />
-              <span className="text-sm">Premium quality accessories</span>
-            </div>
-            
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              <span className="text-sm">Expert advice available via Telegram</span>
-            </div>
-          </div>
-        </div>
+        <AccessoriesHeader />
         
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
-          <div className="flex items-center mb-4 sm:mb-0">
-            <Filter className="h-5 w-5 mr-2 text-leaf-500" />
-            <h2 className="text-xl font-medium">Filter Accessories</h2>
-          </div>
-          
-          <Tabs 
-            defaultValue="all" 
-            className="w-full sm:w-auto"
-            onValueChange={setActiveCategory}
-          >
-            <TabsList className="grid grid-cols-2 sm:grid-cols-6 w-full sm:w-auto bg-muted/50">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="tools">Tools</TabsTrigger>
-              <TabsTrigger value="watering">Watering</TabsTrigger>
-              <TabsTrigger value="lighting">Lighting</TabsTrigger>
-              <TabsTrigger value="decor">Decor</TabsTrigger>
-              <TabsTrigger value="soil">Soil & Support</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <AccessoriesFilter onFilterChange={setActiveCategory} />
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {filteredAccessories.map((accessory) => (
@@ -161,46 +104,10 @@ const Accessories = () => {
           ))}
         </div>
         
-        <div className="mt-16 bg-leaf-50 border border-leaf-100 rounded-lg p-8 md:p-12">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-6 md:mb-0 md:mr-8">
-              <h2 className="text-2xl font-serif font-medium mb-2">Complete Your Garden Collection</h2>
-              <p className="text-muted-foreground max-w-xl">
-                Elevate your gardening experience by pairing our premium accessories with quality plants and decorative pots.
-                Create a complete garden setup for a thriving indoor or outdoor space.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                onClick={() => navigate('/buy')}
-                variant="outline" 
-                className="border-leaf-200 hover:bg-leaf-50 text-leaf-700"
-              >
-                <Leaf className="h-4 w-4 mr-2" />
-                Shop Plants
-              </Button>
-              
-              <Button 
-                onClick={() => navigate('/pots')}
-                className="bg-leaf-500 hover:bg-leaf-600 text-white"
-              >
-                Explore Pots
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <AccessoriesPromotionBanner />
       </AnimatedSection>
       
-      <div className="fixed bottom-6 right-6 z-10">
-        <Button 
-          className="h-14 w-14 rounded-full bg-leaf-500 hover:bg-leaf-600 text-white shadow-md"
-          onClick={() => window.open('https://t.me/dasnursery', '_blank')}
-        >
-          <MessageCircle className="h-6 w-6" />
-        </Button>
-      </div>
+      <FloatingContactButton />
     </div>
   );
 };

@@ -1,18 +1,12 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Filter, MessageCircle, ArrowRight, 
-  ShoppingCart, Truck, Leaf
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-
-// Components
 import AnimatedSection from "@/components/AnimatedSection";
+import PotsHeader from "@/components/pots/PotsHeader";
+import PotsFilter from "@/components/pots/PotsFilter";
 import PotCard from "@/components/PotCard";
+import PlantPairings from "@/components/pots/PlantPairings";
+import PotsPromotionBanner from "@/components/pots/PotsPromotionBanner";
+import FloatingContactButton from "@/components/home/FloatingContactButton";
 
 // Pot product data
 const potsData = [
@@ -96,8 +90,26 @@ const potsData = [
   },
 ];
 
+// Plants that pair well with pots
+const pairingPlants = [
+  {
+    name: "Areca Palm",
+    description: "Perfect with Large Terracotta Pots",
+    image: "https://images.unsplash.com/photo-1598880942562-aeafdca54406?q=80&w=1974&auto=format&fit=crop"
+  },
+  {
+    name: "Peace Lily",
+    description: "Goes well with Decorative Ceramic Pots",
+    image: "https://images.unsplash.com/photo-1593482892490-f3bb6222d742?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    name: "Snake Plant",
+    description: "Best in Minimalist Metal Planters",
+    image: "https://images.unsplash.com/photo-1620127807580-990c3ecebd14?q=80&w=1000&auto=format&fit=crop"
+  }
+];
+
 const Pots = () => {
-  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("all");
   
   // Filter pots based on active category
@@ -105,79 +117,12 @@ const Pots = () => {
     ? potsData 
     : potsData.filter(pot => pot.category.toLowerCase() === activeCategory.toLowerCase());
   
-  // Plants that pair well with pots
-  const pairingPlants = [
-    {
-      name: "Areca Palm",
-      description: "Perfect with Large Terracotta Pots",
-      image: "https://images.unsplash.com/photo-1598880942562-aeafdca54406?q=80&w=1974&auto=format&fit=crop"
-    },
-    {
-      name: "Peace Lily",
-      description: "Goes well with Decorative Ceramic Pots",
-      image: "https://images.unsplash.com/photo-1593482892490-f3bb6222d742?q=80&w=2070&auto=format&fit=crop"
-    },
-    {
-      name: "Snake Plant",
-      description: "Best in Minimalist Metal Planters",
-      image: "https://images.unsplash.com/photo-1620127807580-990c3ecebd14?q=80&w=1000&auto=format&fit=crop"
-    }
-  ];
-  
   return (
     <div className="pt-28 pb-20 px-6 md:px-12">
       <AnimatedSection className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
-            Shop Pots
-          </Badge>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium mb-4 mt-3">
-            Upgrade Your Plant Decor with Stunning Pots
-          </h1>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            Give your plants a stylish new home with our premium ceramic, terracotta, hanging, and decorative pots.
-            Whether you're looking for a minimalist touch or a bold statement piece, we've got the perfect pot for every plant!
-          </p>
-          
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <Truck className="h-4 w-4 mr-2" />
-              <span className="text-sm">Fast delivery across Siliguri</span>
-            </div>
-            
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <Leaf className="h-4 w-4 mr-2" />
-              <span className="text-sm">Bulk orders available outside Siliguri</span>
-            </div>
-            
-            <div className="flex items-center bg-leaf-50 text-leaf-700 rounded-full px-4 py-2">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              <span className="text-sm">Instant order confirmation via Telegram</span>
-            </div>
-          </div>
-        </div>
+        <PotsHeader />
         
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
-          <div className="flex items-center mb-4 sm:mb-0">
-            <Filter className="h-5 w-5 mr-2 text-leaf-500" />
-            <h2 className="text-xl font-medium">Filter Pots</h2>
-          </div>
-          
-          <Tabs 
-            defaultValue="all" 
-            className="w-full sm:w-auto"
-            onValueChange={setActiveCategory}
-          >
-            <TabsList className="grid grid-cols-2 sm:grid-cols-6 w-full sm:w-auto bg-muted/50">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="ceramic">Ceramic</TabsTrigger>
-              <TabsTrigger value="terracotta">Terracotta</TabsTrigger>
-              <TabsTrigger value="metal">Metal</TabsTrigger>
-              <TabsTrigger value="concrete">Concrete</TabsTrigger>
-              <TabsTrigger value="woven">Woven</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <PotsFilter onFilterChange={setActiveCategory} />
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {filteredPots.map((pot) => (
@@ -185,74 +130,12 @@ const Pots = () => {
           ))}
         </div>
         
-        <div className="mt-16">
-          <h2 className="text-2xl font-serif font-medium mb-6 flex items-center">
-            <Leaf className="h-5 w-5 mr-2 text-leaf-500" />
-            Best Plants for These Pots
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pairingPlants.map((plant, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5 }}
-                className="relative rounded-lg overflow-hidden h-56 group cursor-pointer"
-                onClick={() => navigate('/buy')}
-              >
-                <img 
-                  src={plant.image} 
-                  alt={plant.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent flex flex-col justify-end p-4">
-                  <h3 className="text-white font-medium text-lg">{plant.name}</h3>
-                  <p className="text-white/80 text-sm">{plant.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        <PlantPairings pairingPlants={pairingPlants} />
         
-        <div className="mt-16 bg-leaf-50 border border-leaf-100 rounded-lg p-8 md:p-12">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-6 md:mb-0 md:mr-8">
-              <h2 className="text-2xl font-serif font-medium mb-2">Complete Your Garden Set</h2>
-              <p className="text-muted-foreground max-w-xl">
-                For the best results, pair our premium pots with quality plants and nourishing fertilizers.
-                Create a complete garden set for a thriving indoor or outdoor space.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                onClick={() => navigate('/buy')}
-                variant="outline" 
-                className="border-leaf-200 hover:bg-leaf-50 text-leaf-700"
-              >
-                <Leaf className="h-4 w-4 mr-2" />
-                Shop Plants
-              </Button>
-              
-              <Button 
-                onClick={() => navigate('/accessories')}
-                className="bg-leaf-500 hover:bg-leaf-600 text-white"
-              >
-                Explore Accessories
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <PotsPromotionBanner />
       </AnimatedSection>
       
-      <div className="fixed bottom-6 right-6 z-10">
-        <Button 
-          className="h-14 w-14 rounded-full bg-leaf-500 hover:bg-leaf-600 text-white shadow-md"
-          onClick={() => window.open('https://t.me/dasnursery', '_blank')}
-        >
-          <MessageCircle className="h-6 w-6" />
-        </Button>
-      </div>
+      <FloatingContactButton />
     </div>
   );
 };
