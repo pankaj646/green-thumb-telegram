@@ -16,9 +16,15 @@ import AnimatedSection from "@/components/AnimatedSection";
 import PlantCard from "@/components/PlantCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import CategoryCircle from "@/components/CategoryCircle";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Create the Home component
 const Home = () => {
+  // Auto-scroll carousel for bestsellers
+  const bestsellersRef = useRef(null);
+  const newArrivalsRef = useRef(null);
+
   return (
     <div className="flex flex-col w-full overflow-hidden">
       {/* Hero Section */}
@@ -299,7 +305,7 @@ const Home = () => {
         </div>
       </AnimatedSection>
 
-      {/* Featured Plants Section */}
+      {/* Featured Plants Section (Enhanced with Auto-Scroll) */}
       <AnimatedSection className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
@@ -319,41 +325,91 @@ const Home = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <PlantCard 
-              name="Peace Lily"
-              image="https://images.unsplash.com/photo-1616500122272-9ec0b578d239?q=80&w=1000&auto=format&fit=crop"
-              price={249}
-              category="Indoor"
-              rating={4.8}
-            />
-            <PlantCard 
-              name="Snake Plant"
-              image="https://images.unsplash.com/photo-1620127807580-990c3ecebd14?q=80&w=1000&auto=format&fit=crop"
-              price={399}
-              category="Indoor"
-              rating={4.9}
-              bestSeller
-            />
-            <PlantCard 
-              name="Monstera Deliciosa"
-              image="https://images.unsplash.com/photo-1614594975525-e45190c55d0b?q=80&w=1000&auto=format&fit=crop"
-              price={599}
-              category="Indoor"
-              rating={4.7}
-            />
-            <PlantCard 
-              name="Fiddle Leaf Fig"
-              image="https://images.unsplash.com/photo-1682078573205-89574d1b2027?q=80&w=1000&auto=format&fit=crop"
-              price={799}
-              category="Indoor"
-              rating={4.6}
-            />
+          <div className="relative w-full">
+            <Carousel
+              ref={bestsellersRef}
+              className="w-full"
+              opts={{
+                align: "start",
+                loop: true,
+                dragFree: true,
+                containScroll: false,
+              }}
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {[
+                  {
+                    name: "Peace Lily",
+                    image: "https://images.unsplash.com/photo-1616500122272-9ec0b578d239?q=80&w=1000&auto=format&fit=crop",
+                    price: 249,
+                    category: "Indoor",
+                    rating: 4.8,
+                  },
+                  {
+                    name: "Snake Plant",
+                    image: "https://images.unsplash.com/photo-1620127807580-990c3ecebd14?q=80&w=1000&auto=format&fit=crop",
+                    price: 399,
+                    category: "Indoor",
+                    rating: 4.9,
+                    bestSeller: true,
+                  },
+                  {
+                    name: "Monstera Deliciosa",
+                    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?q=80&w=1000&auto=format&fit=crop",
+                    price: 599,
+                    category: "Indoor",
+                    rating: 4.7,
+                  },
+                  {
+                    name: "Fiddle Leaf Fig",
+                    image: "https://images.unsplash.com/photo-1682078573205-89574d1b2027?q=80&w=1000&auto=format&fit=crop",
+                    price: 799,
+                    category: "Indoor",
+                    rating: 4.6,
+                  },
+                  {
+                    name: "Rubber Plant",
+                    image: "https://images.unsplash.com/photo-1637967952747-f0b95f0a5a5f?q=80&w=1000&auto=format&fit=crop",
+                    price: 499,
+                    category: "Indoor",
+                    rating: 4.5,
+                  },
+                  {
+                    name: "ZZ Plant",
+                    image: "https://images.unsplash.com/photo-1632321931499-e8718f7f5af2?q=80&w=1000&auto=format&fit=crop",
+                    price: 349,
+                    category: "Indoor",
+                    rating: 4.7,
+                  },
+                ].map((plant, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/4">
+                    <motion.div
+                      whileHover={{ y: -10 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="h-full"
+                    >
+                      <PlantCard
+                        name={plant.name}
+                        image={plant.image}
+                        price={plant.price}
+                        category={plant.category}
+                        rating={plant.rating}
+                        bestSeller={plant.bestSeller}
+                      />
+                    </motion.div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="absolute -top-16 right-0 flex items-center gap-2">
+                <CarouselPrevious className="relative left-0 right-auto bg-white hover:bg-leaf-50 border-leaf-200" />
+                <CarouselNext className="relative right-0 left-auto bg-white hover:bg-leaf-50 border-leaf-200" />
+              </div>
+            </Carousel>
           </div>
         </div>
       </AnimatedSection>
 
-      {/* New Arrivals Section */}
+      {/* New Arrivals Section (Enhanced with Auto-Scroll) */}
       <AnimatedSection className="py-20 px-6 md:px-12 bg-gradient-to-b from-white to-leaf-50/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
@@ -373,39 +429,91 @@ const Home = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <PlantCard 
-              name="Calathea Orbifolia"
-              image="https://images.unsplash.com/photo-1637967886160-fd71a17a9d0c?q=80&w=1000&auto=format&fit=crop"
-              price={499}
-              category="Indoor"
-              rating={4.7}
-              bestSeller={false}
-            />
-            <PlantCard 
-              name="String of Pearls"
-              image="https://images.unsplash.com/photo-1622576407952-2c1eeac3b1d6?q=80&w=1000&auto=format&fit=crop"
-              price={349}
-              category="Hanging"
-              rating={4.8}
-              bestSeller={false}
-            />
-            <PlantCard 
-              name="Alocasia Polly"
-              image="https://images.unsplash.com/photo-1632207538509-cc90944e0388?q=80&w=1000&auto=format&fit=crop"
-              price={649}
-              category="Indoor"
-              rating={4.9}
-              bestSeller={false}
-            />
-            <PlantCard 
-              name="Pink Anthurium"
-              image="https://images.unsplash.com/photo-1593691509543-c55fb32d8de5?q=80&w=1000&auto=format&fit=crop"
-              price={799}
-              category="Flowering"
-              rating={4.7}
-              bestSeller={false}
-            />
+          <div className="relative w-full">
+            <Carousel
+              ref={newArrivalsRef}
+              className="w-full"
+              opts={{
+                align: "start",
+                loop: true,
+                dragFree: true,
+                containScroll: false,
+              }}
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {[
+                  {
+                    name: "Calathea Orbifolia",
+                    image: "https://images.unsplash.com/photo-1637967886160-fd71a17a9d0c?q=80&w=1000&auto=format&fit=crop",
+                    price: 499,
+                    category: "Indoor",
+                    rating: 4.7,
+                    bestSeller: false,
+                  },
+                  {
+                    name: "String of Pearls",
+                    image: "https://images.unsplash.com/photo-1622576407952-2c1eeac3b1d6?q=80&w=1000&auto=format&fit=crop",
+                    price: 349,
+                    category: "Hanging",
+                    rating: 4.8,
+                    bestSeller: false,
+                  },
+                  {
+                    name: "Alocasia Polly",
+                    image: "https://images.unsplash.com/photo-1632207538509-cc90944e0388?q=80&w=1000&auto=format&fit=crop",
+                    price: 649,
+                    category: "Indoor",
+                    rating: 4.9,
+                    bestSeller: false,
+                  },
+                  {
+                    name: "Pink Anthurium",
+                    image: "https://images.unsplash.com/photo-1593691509543-c55fb32d8de5?q=80&w=1000&auto=format&fit=crop",
+                    price: 799,
+                    category: "Flowering",
+                    rating: 4.7,
+                    bestSeller: false,
+                  },
+                  {
+                    name: "Philodendron Birkin",
+                    image: "https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?q=80&w=1000&auto=format&fit=crop",
+                    price: 599,
+                    category: "Indoor",
+                    rating: 4.8,
+                    bestSeller: false,
+                  },
+                  {
+                    name: "Money Tree",
+                    image: "https://images.unsplash.com/photo-1614594576605-11382374e721?q=80&w=1000&auto=format&fit=crop",
+                    price: 449,
+                    category: "Indoor",
+                    rating: 4.6,
+                    bestSeller: false,
+                  },
+                ].map((plant, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/4">
+                    <motion.div
+                      whileHover={{ y: -10 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="h-full"
+                    >
+                      <PlantCard
+                        name={plant.name}
+                        image={plant.image}
+                        price={plant.price}
+                        category={plant.category}
+                        rating={plant.rating}
+                        bestSeller={plant.bestSeller}
+                      />
+                    </motion.div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="absolute -top-16 right-0 flex items-center gap-2">
+                <CarouselPrevious className="relative left-0 right-auto bg-white hover:bg-leaf-50 border-leaf-200" />
+                <CarouselNext className="relative right-0 left-auto bg-white hover:bg-leaf-50 border-leaf-200" />
+              </div>
+            </Carousel>
           </div>
         </div>
       </AnimatedSection>
@@ -638,3 +746,4 @@ const Home = () => {
 };
 
 export default Home;
+

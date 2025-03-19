@@ -20,6 +20,7 @@ import Accessories from "./pages/Accessories";
 import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
 // Layouts
 import MainLayout from "./layouts/MainLayout";
@@ -35,7 +36,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route element={<MainLayout />}>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/buy" element={<BuyPlants />} />
               <Route path="/rent" element={<RentPlants />} />
               <Route path="/services" element={<BookServices />} />
