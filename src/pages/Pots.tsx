@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Filter, MessageCircle, ArrowRight, 
-  ShoppingCart, Truck, Leaf, Star
+  ShoppingCart, Truck, Leaf
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { useCart } from "@/context/CartContext";
 
 // Components
 import AnimatedSection from "@/components/AnimatedSection";
+import PotCard from "@/components/PotCard";
 
 // Pot product data
 const potsData = [
@@ -25,6 +24,7 @@ const potsData = [
     salePrice: 699,
     category: "Ceramic",
     rating: 4.9,
+    reviews: 123,
     bestFor: "Snake Plant, Succulents, Aloe Vera",
     size: "Medium",
     bestSeller: true
@@ -37,6 +37,7 @@ const potsData = [
     salePrice: null,
     category: "Terracotta",
     rating: 4.7,
+    reviews: 86,
     bestFor: "Herbs, Cactus, Succulents",
     size: "Small",
     bestSeller: false
@@ -49,6 +50,7 @@ const potsData = [
     salePrice: 499,
     category: "Metal",
     rating: 4.8,
+    reviews: 92,
     bestFor: "Money Plant, Spider Plant, Ivy",
     size: "Medium",
     bestSeller: false
@@ -61,6 +63,7 @@ const potsData = [
     salePrice: 999,
     category: "Ceramic",
     rating: 4.9,
+    reviews: 138,
     bestFor: "Fiddle Leaf Fig, Monstera, Palm",
     size: "Large",
     bestSeller: false
@@ -73,6 +76,7 @@ const potsData = [
     salePrice: 649,
     category: "Concrete",
     rating: 4.6,
+    reviews: 75,
     bestFor: "Succulents, Cacti",
     size: "Small",
     bestSeller: false
@@ -85,100 +89,12 @@ const potsData = [
     salePrice: 599,
     category: "Woven",
     rating: 4.8,
+    reviews: 104,
     bestFor: "Peace Lily, Bird of Paradise",
     size: "Medium",
     bestSeller: true
   },
 ];
-
-const PotCard = ({ pot }: { pot: typeof potsData[0] }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const { addItem } = useCart();
-  
-  const handleAddToCart = () => {
-    addItem({
-      id: pot.id,
-      name: pot.name,
-      image: pot.image,
-      price: pot.salePrice || pot.regularPrice,
-      category: pot.category,
-      type: "pot"
-    });
-  };
-  
-  const discount = pot.salePrice
-    ? Math.round(((pot.regularPrice - pot.salePrice) / pot.regularPrice) * 100)
-    : 0;
-    
-  return (
-    <Card className="overflow-hidden border-leaf-100 shadow-soft group bg-white/80 backdrop-blur-sm hover:shadow-medium transition-all duration-300">
-      <CardContent className="p-0">
-        <div 
-          className="relative h-60 overflow-hidden"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <img 
-            src={pot.image} 
-            alt={pot.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
-          {pot.bestSeller && (
-            <Badge className="absolute top-2 right-2 bg-leaf-500 hover:bg-leaf-600 text-white">
-              Best Seller
-            </Badge>
-          )}
-          {pot.salePrice && (
-            <Badge className="absolute top-2 left-2 bg-red-500 text-white">
-              {discount}% OFF
-            </Badge>
-          )}
-          <motion.div 
-            className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/50 to-black/0 p-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ 
-              opacity: isHovered ? 1 : 0, 
-              y: isHovered ? 0 : 20 
-            }}
-            transition={{ duration: 0.2 }}
-          >
-            <Button 
-              onClick={handleAddToCart}
-              size="sm" 
-              className="w-full bg-white text-leaf-700 hover:bg-leaf-50 border border-leaf-100"
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
-            </Button>
-          </motion.div>
-        </div>
-        <div className="p-4">
-          <div className="flex justify-between items-start mb-1">
-            <Badge variant="outline" className="text-xs border-leaf-200 bg-leaf-50 text-leaf-700">
-              {pot.size} • {pot.category}
-            </Badge>
-            <div className="flex items-center">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-              <span className="text-xs font-medium">{pot.rating}</span>
-            </div>
-          </div>
-          <h3 className="font-serif text-lg font-medium mt-1 mb-1">{pot.name}</h3>
-          <div className="flex items-center gap-2 mb-1">
-            {pot.salePrice ? (
-              <>
-                <span className="font-medium text-leaf-700">₹{pot.salePrice}</span>
-                <span className="text-sm text-muted-foreground line-through">₹{pot.regularPrice}</span>
-              </>
-            ) : (
-              <span className="font-medium text-leaf-700">₹{pot.regularPrice}</span>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">Best for: {pot.bestFor}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
 
 const Pots = () => {
   const navigate = useNavigate();
@@ -212,7 +128,10 @@ const Pots = () => {
     <div className="pt-28 pb-20 px-6 md:px-12">
       <AnimatedSection className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium mb-4">
+          <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
+            Shop Pots
+          </Badge>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium mb-4 mt-3">
             Upgrade Your Plant Decor with Stunning Pots
           </h1>
           <p className="text-muted-foreground max-w-3xl mx-auto">
@@ -315,10 +234,10 @@ const Pots = () => {
               </Button>
               
               <Button 
-                onClick={() => navigate('/fertilizers')}
+                onClick={() => navigate('/accessories')}
                 className="bg-leaf-500 hover:bg-leaf-600 text-white"
               >
-                Explore Fertilizers
+                Explore Accessories
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
