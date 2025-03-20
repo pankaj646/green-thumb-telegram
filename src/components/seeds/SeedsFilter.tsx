@@ -14,9 +14,10 @@ interface SeedsFilterProps {
 const SeedsFilter = ({ onTypeChange, onSeasonChange, onSearch }: SeedsFilterProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchQuery);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    onSearch(query); // Call onSearch immediately when input changes
   };
   
   return (
@@ -27,19 +28,22 @@ const SeedsFilter = ({ onTypeChange, onSeasonChange, onSearch }: SeedsFilterProp
           Search for Seeds by Name or Category...
         </h2>
         
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <div className="flex gap-2">
           <Input 
             type="text" 
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search for tomatoes, basil, marigold..."
             className="flex-1"
           />
-          <Button type="submit" className="bg-leaf-500 hover:bg-leaf-600 text-white">
+          <Button 
+            className="bg-leaf-500 hover:bg-leaf-600 text-white"
+            onClick={() => onSearch(searchQuery)}
+          >
             <Search className="h-4 w-4 mr-2" />
             Search
           </Button>
-        </form>
+        </div>
       </div>
       
       <div>

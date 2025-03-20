@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Star, ShoppingCart, Info, Calendar, AreaChart, Flower, Leaf } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface SeedCardProps {
   seed: {
@@ -38,7 +39,8 @@ const SeedCard = ({ seed }: SeedCardProps) => {
       price: seed.salePrice || seed.regularPrice,
       image: seed.image,
       category: seed.category,
-      type: "seed"
+      quantity: 1,
+      type: "seed" as "plant" | "fertilizer" | "pot" | "accessory" // Type assertion to fix the error
     });
     
     toast({
@@ -133,25 +135,30 @@ const SeedCard = ({ seed }: SeedCardProps) => {
           )}
         </div>
         
-        {showDetails && (
-          <div className="py-3 border-t border-leaf-100 mb-3">
+        <Collapsible 
+          open={showDetails} 
+          onOpenChange={setShowDetails}
+          className="mb-3"
+        >
+          <CollapsibleContent className="py-3 border-t border-leaf-100 data-[state=open]:animate-[accordion-down_0.5s_ease-out] data-[state=closed]:animate-[accordion-up_0.4s_ease-out]">
             <p className="text-sm text-muted-foreground">
               These premium quality {seed.category.toLowerCase()} seeds are perfect for {seed.bestFor || "home gardens"}. Plant during {seed.plantingTime.toLowerCase()} for best results. 
               Expect germination within {seed.daysToGerminate.toLowerCase()}.
             </p>
-          </div>
-        )}
+          </CollapsibleContent>
+        </Collapsible>
         
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-10 border-leaf-200 hover:bg-leaf-50 text-leaf-700"
-            onClick={() => setShowDetails(!showDetails)}
-          >
-            <Info className="h-4 w-4 mr-1.5" />
-            {showDetails ? "Less Info" : "More Info"}
-          </Button>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 h-10 border-leaf-200 hover:bg-leaf-50 text-leaf-700 transition-all duration-300"
+            >
+              <Info className="h-4 w-4 mr-1.5" />
+              {showDetails ? "Less Info" : "More Info"}
+            </Button>
+          </CollapsibleTrigger>
           
           <Button 
             size="sm" 

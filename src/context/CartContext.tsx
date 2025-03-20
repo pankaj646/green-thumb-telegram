@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -10,7 +9,7 @@ export type CartItem = {
   price: number;
   category: string;
   quantity: number;
-  type: "plant" | "fertilizer" | "pot" | "accessory";
+  type: "plant" | "fertilizer" | "pot" | "accessory" | "seed";
 };
 
 type CartState = {
