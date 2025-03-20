@@ -1,26 +1,39 @@
 
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Leaf, ArrowRight } from "lucide-react";
 
 const SeedsPromotionBanner = () => {
+  const navigate = useNavigate();
+  
   return (
-    <div className="bg-gradient-to-r from-green-50 to-leaf-50 rounded-xl overflow-hidden my-16">
-      <div className="flex flex-col md:flex-row items-center">
-        <div className="p-8 md:p-12 flex-1">
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">Start Your Garden Today!</h3>
-          <p className="text-muted-foreground mb-6">
-            Take advantage of our seasonal seed promotion. Buy 3 seed packets, get 1 free!
-            Ideal for beginners and seasoned gardeners alike.
+    <div className="mt-16 bg-leaf-50 border border-leaf-100 rounded-lg p-8 md:p-12">
+      <div className="flex flex-col md:flex-row items-center justify-between">
+        <div className="mb-6 md:mb-0 md:mr-8">
+          <h2 className="text-2xl font-serif font-medium mb-2">Grow Your Own Garden</h2>
+          <p className="text-muted-foreground max-w-xl">
+            Complete your gardening experience with quality tools, pots, and plant care products.
+            Our seeds pair perfectly with our premium soils and fertilizers for optimal growth.
           </p>
-          <Button className="bg-leaf-500 hover:bg-leaf-600 text-white">
-            Shop Now
-          </Button>
         </div>
-        <div className="md:w-1/2 h-64 md:h-auto relative overflow-hidden">
-          <img 
-            src="https://images.unsplash.com/photo-1636804671318-5f85d6329226?q=80&w=1000&auto=format&fit=crop" 
-            alt="Seed Packets" 
-            className="w-full h-full object-cover"
-          />
+        
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button 
+            onClick={() => navigate('/fertilizers')}
+            variant="outline" 
+            className="border-leaf-200 hover:bg-leaf-50 text-leaf-700"
+          >
+            <Leaf className="h-4 w-4 mr-2" />
+            Shop Fertilizers
+          </Button>
+          
+          <Button 
+            onClick={() => navigate('/accessories')}
+            className="bg-leaf-500 hover:bg-leaf-600 text-white"
+          >
+            Explore Accessories
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
         </div>
       </div>
     </div>

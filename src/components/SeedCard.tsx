@@ -1,12 +1,11 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Star, ShoppingCart, Minus, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { Star, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { toast } from "sonner";
 
 interface SeedCardProps {
   seed: {
@@ -25,113 +24,100 @@ interface SeedCardProps {
 }
 
 const SeedCard = ({ seed }: SeedCardProps) => {
+  const { toast } = useToast();
   const { addToCart } = useCart();
-  const [quantity, setQuantity] = useState(1);
-  
+  const [isHovered, setIsHovered] = useState(false);
+
   const handleAddToCart = () => {
     addToCart({
       id: seed.id,
       name: seed.name,
       price: seed.salePrice || seed.regularPrice,
       image: seed.image,
-      quantity,
-      type: 'seed'
+      quantity: 1,
+      type: "seed"
     });
     
-    toast.success("Added to cart!", {
-      description: `${quantity} × ${seed.name}`
+    toast({
+      title: "Added to cart",
+      description: `${seed.name} has been added to your cart.`,
+      duration: 3000,
     });
-  };
-  
-  const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
-  };
-  
-  const decrementQuantity = () => {
-    setQuantity(prev => (prev > 1 ? prev - 1 : 1));
   };
 
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:shadow-md group">
-      <div className="relative overflow-hidden h-48 sm:h-52">
+    <Card 
+      className="overflow-hidden transition-all duration-300 hover:shadow-md"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative h-60 overflow-hidden">
         <img 
           src={seed.image} 
           alt={seed.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className={`w-full h-full object-cover transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
         />
+        
         {seed.bestSeller && (
-          <Badge variant="default" className="absolute top-2 left-2 bg-leaf-500 text-white">
-            Bestseller
+          <Badge className="absolute top-3 left-3 bg-leaf-500 hover:bg-leaf-600 text-white">
+            Best Seller
           </Badge>
         )}
+        
         {seed.salePrice && (
-          <Badge variant="outline" className="absolute top-2 right-2 bg-white text-leaf-600 border-leaf-600">
+          <Badge className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white">
             Sale
           </Badge>
         )}
       </div>
       
-      <CardContent className="pt-4">
-        <h3 className="font-medium text-lg mb-1 text-foreground/90">{seed.name}</h3>
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-medium text-lg">{seed.name}</h3>
+        </div>
         
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="bg-leaf-50 text-leaf-700 px-2 py-0.5 rounded-full text-xs font-medium">
-            {seed.category}
-          </span>
-          <div className="flex items-center">
-            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
-            <span>{seed.rating} ({seed.reviews})</span>
+        <div className="flex items-center text-amber-500 mb-3">
+          <Star className="fill-current h-4 w-4" />
+          <span className="ml-1 text-sm">{seed.rating}</span>
+          <span className="text-muted-foreground text-xs ml-1">({seed.reviews} reviews)</span>
+        </div>
+        
+        <div className="text-sm text-muted-foreground mb-3">
+          <div className="flex justify-between mb-1">
+            <span>Category:</span>
+            <span className="font-medium text-foreground">{seed.category}</span>
+          </div>
+          <div className="flex justify-between mb-1">
+            <span>Planting Time:</span>
+            <span className="font-medium text-foreground">{seed.plantingTime}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Germination:</span>
+            <span className="font-medium text-foreground">{seed.daysToGerminate}</span>
           </div>
         </div>
         
-        <div className="mt-2 space-y-1.5 text-sm">
-          <p><span className="font-medium">Planting Time:</span> {seed.plantingTime}</p>
-          <p><span className="font-medium">Germination:</span> {seed.daysToGerminate}</p>
-        </div>
-        
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-baseline gap-1.5">
+        <div className="flex items-center justify-between mt-4">
+          <div>
             {seed.salePrice ? (
-              <>
-                <span className="text-lg font-medium">₹{seed.salePrice}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-leaf-600">₹{seed.salePrice}</span>
                 <span className="text-sm text-muted-foreground line-through">₹{seed.regularPrice}</span>
-              </>
+              </div>
             ) : (
-              <span className="text-lg font-medium">₹{seed.regularPrice}</span>
+              <span className="text-lg font-bold text-leaf-600">₹{seed.regularPrice}</span>
             )}
           </div>
           
-          <div className="flex items-center">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8 rounded-r-none border-r-0"
-              onClick={decrementQuantity}
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            <div className="h-8 px-3 flex items-center justify-center border border-input">
-              {quantity}
-            </div>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8 rounded-l-none border-l-0"
-              onClick={incrementQuantity}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
+          <Button 
+            onClick={handleAddToCart} 
+            size="sm" 
+            className="bg-leaf-500 hover:bg-leaf-600 text-white"
+          >
+            <ShoppingCart className="h-4 w-4 mr-1" />
+            Add
+          </Button>
         </div>
-        
-        <Button 
-          className={cn(
-            "w-full mt-4 bg-leaf-500 hover:bg-leaf-600 text-white",
-          )}
-          onClick={handleAddToCart}
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-        </Button>
       </CardContent>
     </Card>
   );
