@@ -25,16 +25,15 @@ interface SeedCardProps {
 
 const SeedCard = ({ seed }: SeedCardProps) => {
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleAddToCart = () => {
-    addToCart({
+    addItem({
       id: seed.id,
       name: seed.name,
       price: seed.salePrice || seed.regularPrice,
       image: seed.image,
-      quantity: 1,
       type: "seed"
     });
     

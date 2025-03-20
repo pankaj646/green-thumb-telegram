@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -17,6 +16,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { sendTelegramNotification, createServiceNotification } from "@/utils/telegramNotifications";
 
 // Components
 import AnimatedSection from "@/components/AnimatedSection";
@@ -126,6 +126,7 @@ const BookServices = () => {
   // Form state
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     phone: "",
     address: "",
     service: "",
@@ -162,7 +163,7 @@ const BookServices = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Form validation
@@ -171,23 +172,77 @@ const BookServices = () => {
       return;
     }
     
-    // Show success toast
-    toast.success("Your gardening service booking has been confirmed!");
-    
-    // Navigate to confirmation page
-    setTimeout(() => {
-      navigate("/confirmation", { 
-        state: { 
-          type: "gardening-service",
-          service: selectedCategory 
-            ? serviceCategories.find(category => category.id === selectedCategory)?.title 
-            : formData.service,
-          date: date ? format(date, "MMMM d, yyyy") : "",
-          time: formData.time,
-          formData
-        } 
+    try {
+      // Send notification to Telegram
+      const serviceDate = date ? format(date, "MMMM d, yyyy") : "";
+      
+      const notificationMessage = createServiceNotification({
+        name: formData.name,
+        email: formData.email || "Not provided",
+        phone: formData.phone,
+        address: formData.address,
+        date: serviceDate,
+        time: formData.time,
+        serviceType: formData.service,
+        notes: formData.notes
       });
-    }, 1000);
+      
+      const notificationSent = await sendTelegramNotification(notificationMessage);
+      
+      if (notificationSent) {
+        // Show success toast
+        toast.success("Your gardening service booking has been confirmed!");
+        
+        // Navigate to confirmation page
+        setTimeout(() => {
+          navigate("/confirmation", { 
+            state: { 
+              type: "gardening-service",
+              service: selectedCategory 
+                ? serviceCategories.find(category => category.id === selectedCategory)?.title 
+                : formData.service,
+              date: serviceDate,
+              time: formData.time,
+              formData
+            } 
+          });
+        }, 1000);
+      } else {
+        // Still navigate but show a different message
+        toast.success("Your booking has been received! Our team will contact you soon.");
+        
+        setTimeout(() => {
+          navigate("/confirmation", { 
+            state: { 
+              type: "gardening-service",
+              service: selectedCategory 
+                ? serviceCategories.find(category => category.id === selectedCategory)?.title 
+                : formData.service,
+              date: serviceDate,
+              time: formData.time,
+              formData
+            } 
+          });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Error sending service booking notification:", error);
+      toast.success("Your booking has been received! Our team will contact you soon.");
+      
+      setTimeout(() => {
+        navigate("/confirmation", { 
+          state: { 
+            type: "gardening-service",
+            service: selectedCategory 
+              ? serviceCategories.find(category => category.id === selectedCategory)?.title 
+              : formData.service,
+            date: date ? format(date, "MMMM d, yyyy") : "",
+            time: formData.time,
+            formData
+          } 
+        });
+      }, 1000);
+    }
   };
 
   return (
@@ -433,6 +488,18 @@ const BookServices = () => {
                         name="name" 
                         placeholder="Your full name" 
                         value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email *</Label>
+                      <Input 
+                        id="email" 
+                        name="email" 
+                        placeholder="Your email" 
+                        value={formData.email}
                         onChange={handleInputChange}
                         required
                       />
