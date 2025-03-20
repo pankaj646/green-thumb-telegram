@@ -16,45 +16,94 @@ import {
   Leaf, 
   MessageCircle,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  MapPin
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { sendTelegramNotification, createOrderNotification } from "@/utils/telegramNotifications";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Validation schema
+const checkoutFormSchema = z.object({
+  name: z.string().min(3, { message: "Name must be at least 3 characters" }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number" }),
+  area: z.string().min(3, { message: "Area is required" }),
+  landmark: z.string().optional(),
+  pin: z.string().min(6, { message: "Please enter a valid PIN code" }),
+  city: z.string().min(2, { message: "City is required" }),
+  state: z.string().min(2, { message: "State is required" }),
+  note: z.string().optional()
+});
+
+type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 
 const Cart = () => {
   const { state, clearCart } = useCart();
   const navigate = useNavigate();
   
   const [step, setStep] = useState<'cart' | 'checkout' | 'success'>('cart');
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    note: ""
+  
+  // Initialize form with react-hook-form
+  const form = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      area: "",
+      landmark: "",
+      pin: "",
+      city: "Siliguri", // Default city
+      state: "West Bengal", // Default state
+      note: ""
+    }
   });
 
   const deliveryCharge = state.subtotal > 0 ? 50 : 0;
   const total = state.subtotal + deliveryCharge;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePlaceOrder = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePlaceOrder = async (values: CheckoutFormValues) => {
+    // Show loading toast
+    const loadingToast = toast.loading("Processing your order...");
     
-    // Simple validation
-    if (!formData.name || !formData.phone || !formData.address) {
-      toast.error("Please fill all required fields");
-      return;
-    }
-    
-    // Normally this would be an API call to create the order
-    setTimeout(() => {
+    try {
+      // Send notification to Telegram
+      const notificationMessage = createOrderNotification(
+        { ...values },
+        { 
+          items: state.items,
+          subtotal: state.subtotal,
+          deliveryCharge,
+          total
+        }
+      );
+      
+      const notificationSent = await sendTelegramNotification(notificationMessage);
+      
+      // Clear the loading toast
+      toast.dismiss(loadingToast);
+      
+      if (!notificationSent) {
+        // If notification failed, still proceed but show a warning
+        toast.warning("Your order has been placed, but there might be a delay in processing.");
+      }
+      
+      // Proceed to success step
       setStep('success');
       clearCart();
-    }, 1000);
+      
+    } catch (error) {
+      // Clear the loading toast
+      toast.dismiss(loadingToast);
+      
+      // Show error toast but still proceed to success (don't block the user)
+      toast.error("There was an issue processing your order, but it has been received.");
+      setStep('success');
+      clearCart();
+    }
   };
 
   return (
@@ -223,88 +272,182 @@ const Cart = () => {
                 {/* Checkout Form */}
                 <div className="lg:col-span-2 bg-white rounded-xl border border-leaf-100 shadow-soft p-6">
                   <h2 className="text-xl font-medium mb-6 flex items-center">
-                    <Truck className="h-5 w-5 mr-2 text-leaf-500" />
+                    <MapPin className="h-5 w-5 mr-2 text-leaf-500" />
                     Delivery Information
                   </h2>
                   
-                  <form onSubmit={handlePlaceOrder} className="space-y-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-1">
-                        Full Name *
-                      </label>
-                      <Input 
-                        id="name" 
-                        name="name" 
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Your full name"
-                        className="border-leaf-200"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium mb-1">
-                        Phone Number *
-                      </label>
-                      <Input 
-                        id="phone" 
-                        name="phone" 
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+91 9000000000"
-                        className="border-leaf-200"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="address" className="block text-sm font-medium mb-1">
-                        Delivery Address *
-                      </label>
-                      <Textarea 
-                        id="address" 
-                        name="address" 
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        placeholder="Complete delivery address with PIN code"
-                        className="border-leaf-200 min-h-24"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="note" className="block text-sm font-medium mb-1">
-                        Order Note (Optional)
-                      </label>
-                      <Textarea 
-                        id="note" 
-                        name="note" 
-                        value={formData.note}
-                        onChange={handleInputChange}
-                        placeholder="Any special instructions for delivery"
-                        className="border-leaf-200"
-                      />
-                    </div>
-                    
-                    <div className="flex gap-4 pt-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="flex-1 border-leaf-200 hover:bg-leaf-50 text-leaf-700"
-                        onClick={() => setStep('cart')}
-                      >
-                        Back to Cart
-                      </Button>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handlePlaceOrder)} className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Full Name *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  placeholder="Your full name"
+                                  className="border-leaf-200"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  placeholder="+91 9000000000"
+                                  className="border-leaf-200"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                       
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-leaf-500 hover:bg-leaf-600 text-white"
-                      >
-                        Place Order
-                      </Button>
-                    </div>
-                  </form>
+                      <div>
+                        <h3 className="text-sm font-medium mb-2 text-muted-foreground">Delivery Address</h3>
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="area"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Area/Street Address *</FormLabel>
+                            <FormControl>
+                              <Input 
+                                {...field} 
+                                placeholder="House/Flat no., Street, Area"
+                                className="border-leaf-200"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="landmark"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Landmark (Optional)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                {...field} 
+                                placeholder="Nearby landmark for easy navigation"
+                                className="border-leaf-200"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="pin"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>PIN Code *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  placeholder="734001"
+                                  className="border-leaf-200"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>City *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  className="border-leaf-200"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="state"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>State *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  className="border-leaf-200"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="note"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Order Note (Optional)</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                {...field} 
+                                placeholder="Any special instructions for delivery"
+                                className="border-leaf-200 min-h-24"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="flex gap-4 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1 border-leaf-200 hover:bg-leaf-50 text-leaf-700"
+                          onClick={() => setStep('cart')}
+                        >
+                          Back to Cart
+                        </Button>
+                        
+                        <Button
+                          type="submit"
+                          className="flex-1 bg-leaf-500 hover:bg-leaf-600 text-white"
+                          disabled={state.items.length === 0}
+                        >
+                          Place Order
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
                 </div>
                 
                 {/* Order Summary */}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import { Calendar, Check, Clock, Leaf, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { sendTelegramNotification, createRentalNotification } from "@/utils/telegramNotifications";
 
 // Components
 import AnimatedSection from "@/components/AnimatedSection";
@@ -137,8 +137,8 @@ const RentPlants = () => {
     setActiveTab("custom"); // Move to customization tab
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle form submission with Telegram integration
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Form validation
@@ -147,19 +147,58 @@ const RentPlants = () => {
       return;
     }
     
-    // Show success toast
-    toast.success("Your plant rental request has been received!");
+    // Show loading toast
+    const loadingToast = toast.loading("Processing your rental request...");
     
-    // Navigate to confirmation page
-    setTimeout(() => {
-      navigate("/confirmation", { 
-        state: { 
-          type: "rental",
-          package: selectedPackage ? rentalPackages.find(pkg => pkg.id === selectedPackage) : null,
-          formData
-        } 
-      });
-    }, 1000);
+    try {
+      // Get selected package info if any
+      const packageInfo = selectedPackage 
+        ? rentalPackages.find(pkg => pkg.id === selectedPackage)
+        : undefined;
+      
+      // Send notification to Telegram
+      const notificationMessage = createRentalNotification(
+        formData,
+        packageInfo
+      );
+      
+      const notificationSent = await sendTelegramNotification(notificationMessage);
+      
+      // Clear the loading toast
+      toast.dismiss(loadingToast);
+      
+      // Show success toast
+      toast.success("Your plant rental request has been received!");
+      
+      // Navigate to confirmation page
+      setTimeout(() => {
+        navigate("/confirmation", { 
+          state: { 
+            type: "rental",
+            package: packageInfo,
+            formData
+          } 
+        });
+      }, 1000);
+      
+    } catch (error) {
+      // Clear the loading toast
+      toast.dismiss(loadingToast);
+      
+      // Show success toast anyway (don't block the user)
+      toast.success("Your plant rental request has been received!");
+      
+      // Navigate to confirmation page
+      setTimeout(() => {
+        navigate("/confirmation", { 
+          state: { 
+            type: "rental",
+            package: selectedPackage ? rentalPackages.find(pkg => pkg.id === selectedPackage) : null,
+            formData
+          } 
+        });
+      }, 1000);
+    }
   };
 
   return (
