@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
 import SeedsHeader from "@/components/seeds/SeedsHeader";
@@ -154,25 +153,21 @@ const Seeds = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSeeds, setFilteredSeeds] = useState(seedsData);
   
-  // Filter seeds based on active filters and search query
   useEffect(() => {
     let result = seedsData;
     
-    // Filter by type
     if (activeType !== "all") {
       result = result.filter(seed => 
         seed.category.toLowerCase() === activeType.toLowerCase()
       );
     }
     
-    // Filter by season
     if (activeSeason !== "all") {
       result = result.filter(seed => 
         seed.growingSeason?.toLowerCase() === activeSeason.toLowerCase()
       );
     }
     
-    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(seed => 
@@ -186,7 +181,6 @@ const Seeds = () => {
     setFilteredSeeds(result);
   }, [activeType, activeSeason, searchQuery]);
   
-  // No results component
   const NoResults = () => (
     <div className="col-span-full flex flex-col items-center justify-center py-12 px-4 bg-white/50 backdrop-blur-sm rounded-lg border border-leaf-50">
       <Leaf className="h-12 w-12 text-leaf-300 mb-4" />
@@ -208,7 +202,7 @@ const Seeds = () => {
           onSearch={setSearchQuery}
         />
         
-        <div id="seed-listings" className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
+        <div id="seed-listings" className="grid grid-cols-2 gap-3 sm:gap-6 mb-8">
           {filteredSeeds.length > 0 ? (
             filteredSeeds.map((seed) => (
               <SeedCard key={seed.id} seed={seed} />

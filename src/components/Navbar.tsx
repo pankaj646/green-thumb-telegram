@@ -23,6 +23,19 @@ const Navbar = () => {
     // Close mobile menu when route changes
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+  
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -94,22 +107,22 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Fixed position with scrollable content */}
         <div
           className={cn(
-            "fixed inset-0 top-16 z-40 bg-background/95 backdrop-blur-md transform transition-transform duration-300 ease-in-out md:hidden",
+            "fixed inset-0 top-16 z-40 bg-background/95 backdrop-blur-md transform transition-transform duration-300 ease-in-out md:hidden overflow-y-auto",
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
-          <nav className="flex flex-col items-center justify-center h-full gap-8">
+          <nav className="flex flex-col items-center pt-8 pb-20 h-full">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={cn(
-                  "text-xl font-medium transition-colors duration-300 hover:text-leaf-600",
+                  "text-xl font-medium py-4 w-full text-center transition-colors duration-300 hover:text-leaf-600 hover:bg-leaf-50/50",
                   location.pathname === link.path
-                    ? "text-leaf-600"
+                    ? "text-leaf-600 bg-leaf-50/30"
                     : "text-foreground/80"
                 )}
               >

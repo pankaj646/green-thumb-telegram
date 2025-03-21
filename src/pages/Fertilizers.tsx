@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -199,7 +198,7 @@ const Fertilizers = () => {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
           {filteredFertilizers.map((fertilizer) => (
             <FertilizerCard
               key={fertilizer.id}
