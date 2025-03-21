@@ -9,44 +9,52 @@ import { cn } from "@/lib/utils";
 // Page metadata for SEO
 const pageMetadata: Record<string, { title: string; description: string }> = {
   "/": {
-    title: "Green Thumb | Indoor & Outdoor Plants",
-    description: "Find beautiful indoor and outdoor plants, seeds, pots, and gardening accessories at Green Thumb. Quality plants delivered to your doorstep."
+    title: "Das Nursery | Indoor & Outdoor Plants in Siliguri",
+    description: "Find beautiful indoor and outdoor plants, seeds, pots, and gardening accessories at Das Nursery. Quality plants delivered to your doorstep in Siliguri and bulk orders for Darjeeling, Sikkim, Nepal, Bhutan, and Assam."
   },
   "/home": {
-    title: "Green Thumb | Home Plants & Gardening",
-    description: "Discover our collection of premium indoor and outdoor plants, gardening supplies, and plant care services at Green Thumb."
+    title: "Das Nursery | Home Plants & Gardening in Siliguri",
+    description: "Discover our collection of premium indoor and outdoor plants, gardening supplies, and plant care services at Das Nursery in Siliguri. Free delivery within Siliguri."
   },
   "/buy": {
-    title: "Buy Plants Online | Green Thumb",
-    description: "Shop our wide selection of indoor and outdoor plants including flowering, low-maintenance, and air purifying varieties."
+    title: "Buy Plants Online in Siliguri | Das Nursery",
+    description: "Shop our wide selection of indoor and outdoor plants including flowering, low-maintenance, and air purifying varieties. Located at Mamu More, Siliguri with free local delivery."
   },
   "/rent": {
-    title: "Rent Plants | Green Thumb",
-    description: "Rent beautiful plants for your home, office or events. Flexible rental options with maintenance included."
+    title: "Rent Plants in Siliguri | Das Nursery",
+    description: "Rent beautiful plants for your home, office or events in Siliguri. Flexible rental options with maintenance included from Das Nursery."
   },
   "/services": {
-    title: "Plant Care & Garden Services | Green Thumb",
-    description: "Professional plant care and garden services including maintenance, landscaping, and garden design."
+    title: "Plant Care & Garden Services in Siliguri | Das Nursery",
+    description: "Professional plant care and garden services in Siliguri including maintenance, landscaping, and garden design by Das Nursery experts."
   },
   "/seeds": {
-    title: "Buy Plant Seeds Online | Green Thumb",
-    description: "Quality vegetable, flower and herb seeds for your garden. Organic options available with detailed growing instructions."
+    title: "Buy Plant Seeds Online in Siliguri | Das Nursery",
+    description: "Quality vegetable, flower and herb seeds for your garden in Siliguri. Organic options available with detailed growing instructions from Das Nursery."
   },
   "/pots": {
-    title: "Planters & Pots Collection | Green Thumb",
-    description: "Explore our stylish collection of plant pots, planters and containers in various sizes, materials and designs."
+    title: "Planters & Pots Collection in Siliguri | Das Nursery",
+    description: "Explore our stylish collection of plant pots, planters and containers in various sizes, materials and designs at Das Nursery in Siliguri."
   },
   "/fertilizers": {
-    title: "Plant Fertilizers & Soil | Green Thumb",
-    description: "Shop premium plant fertilizers, potting soil, and plant nutrients for healthier and stronger plants."
+    title: "Plant Fertilizers & Soil in Siliguri | Das Nursery",
+    description: "Shop premium plant fertilizers, potting soil, and plant nutrients for healthier and stronger plants at Das Nursery in Siliguri, West Bengal."
   },
   "/accessories": {
-    title: "Garden Tools & Accessories | Green Thumb",
-    description: "Essential gardening tools, accessories and supplies for plant care and garden maintenance."
+    title: "Garden Tools & Accessories in Siliguri | Das Nursery",
+    description: "Essential gardening tools, accessories and supplies for plant care and garden maintenance at Das Nursery in Siliguri. Visit us at Mamu More or call +91 7319322612."
   },
   "/contact": {
-    title: "Contact Us | Green Thumb",
-    description: "Get in touch with our plant experts for advice, support, or to place an order. We're here to help with all your gardening needs."
+    title: "Contact Das Nursery in Siliguri | Get In Touch",
+    description: "Get in touch with Das Nursery plant experts for advice, support, or to place an order. Located at Mamu More, Siliguri. Call us at +91 7319322612 or +91 7583941787."
+  },
+  "/cart": {
+    title: "Your Cart | Das Nursery Siliguri",
+    description: "Review and complete your plant order from Das Nursery in Siliguri. We offer free delivery within Siliguri and bulk orders for neighboring regions."
+  },
+  "/confirmation": {
+    title: "Order Confirmation | Das Nursery Siliguri",
+    description: "Thank you for your order from Das Nursery in Siliguri. We'll process your order and deliver your plants as soon as possible."
   },
 };
 
@@ -56,8 +64,8 @@ const MainLayout = () => {
   
   // Get metadata for current path
   const metadata = pageMetadata[location.pathname] || {
-    title: "Green Thumb | Your Plant Shop",
-    description: "Find the perfect plants, seeds, pots and accessories for your home or garden."
+    title: "Das Nursery | Your Plant Shop in Siliguri",
+    description: "Find the perfect plants, seeds, pots and accessories for your home or garden at Das Nursery in Siliguri, West Bengal. Call us at +91 7319322612 for inquiries."
   };
   
   useEffect(() => {

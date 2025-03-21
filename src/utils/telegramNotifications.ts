@@ -1,4 +1,3 @@
-
 // Telegram notification utility
 // This utility handles sending notifications to the owner's Telegram account
 
@@ -89,6 +88,97 @@ ${itemsList}
 <b>Delivery:</b> ₹${orderInfo.deliveryCharge}
 <b>TOTAL:</b> ₹${orderInfo.total}
 `;
+};
+
+/**
+ * Sends an order notification to Telegram
+ */
+export const sendOrderToTelegram = async (
+  items: Array<{id: number; name: string; price: number; quantity: number; type: string}>,
+  customerInfo: {
+    name: string;
+    phone: string;
+    area: string;
+    landmark: string;
+    pin: string;
+    city: string;
+    state: string;
+    note?: string;
+  }
+): Promise<boolean> => {
+  // Calculate order totals
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const deliveryCharge = 50; // Standard delivery charge
+  const total = subtotal + deliveryCharge;
+  
+  // Create the order notification message
+  const message = createOrderNotification(
+    customerInfo,
+    {
+      items: items.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      subtotal,
+      deliveryCharge,
+      total
+    }
+  );
+  
+  // Send the notification
+  return sendTelegramNotification(message);
+};
+
+/**
+ * Creates a formatted contact form notification message
+ */
+export const createContactFormNotification = (
+  contactInfo: {
+    name: string;
+    email: string;
+    phone?: string;
+    message: string;
+  }
+) => {
+  // Create a readable timestamp
+  const timestamp = new Date().toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+  
+  // Build the message
+  return `
+<b>🌿 NEW CONTACT INQUIRY 🌿</b>
+<i>${timestamp}</i>
+
+<b>Customer Information:</b>
+Name: ${contactInfo.name}
+Email: ${contactInfo.email}
+${contactInfo.phone ? `Phone: ${contactInfo.phone}` : ''}
+
+<b>Message:</b>
+${contactInfo.message}
+`;
+};
+
+/**
+ * Sends a contact form notification to Telegram
+ */
+export const sendContactToTelegram = async (
+  contactInfo: {
+    name: string;
+    email: string;
+    phone?: string;
+    message: string;
+  }
+): Promise<boolean> => {
+  // Create the contact notification message
+  const message = createContactFormNotification(contactInfo);
+  
+  // Send the notification
+  return sendTelegramNotification(message);
 };
 
 /**

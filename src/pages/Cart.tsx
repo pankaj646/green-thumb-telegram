@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, CheckCircle2, AlertCircle, MapPin } from "lucide-react";
+import { ShoppingCart, CheckCircle2, AlertCircle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import CartItem from "@/components/CartItem";
 import { sendOrderToTelegram } from "@/utils/telegramNotifications";
@@ -35,7 +36,7 @@ const formDataToTelegram = (formData: {
 };
 
 const Cart = () => {
-  const { cart, removeFromCart, clearCart } = useCart();
+  const { state, removeItem, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderConfirmed, setIsOrderConfirmed] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ const Cart = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalPrice = state.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -73,7 +74,7 @@ const Cart = () => {
 
     try {
       // Send order to Telegram
-      await sendOrderToTelegram(cart, formDataToTelegram(formData));
+      await sendOrderToTelegram(state.items, formDataToTelegram(formData));
 
       // Clear the cart
       clearCart();
@@ -103,7 +104,7 @@ const Cart = () => {
     }
   };
 
-  if (cart.length === 0) {
+  if (state.items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <ShoppingCart className="h-16 w-16 text-gray-400 mb-4" />
@@ -117,8 +118,8 @@ const Cart = () => {
   return (
     <div className="container mx-auto mt-20 p-4">
       <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
-      {cart.map((item) => (
-        <CartItem key={item.id} item={item} removeFromCart={removeFromCart} />
+      {state.items.map((item) => (
+        <CartItem key={item.id} item={item} />
       ))}
       <Separator className="my-4" />
       <div className="flex justify-between items-center mb-4">

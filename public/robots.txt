@@ -9,4 +9,5 @@ Disallow: /admin/
 Disallow: /checkout/
 
 # Sitemap location
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://dasnursery.com/sitemap.xml
+

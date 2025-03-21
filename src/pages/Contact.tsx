@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Phone, Mail, MapPin, Send, MessageSquare } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { sendContactToTelegram } from "@/utils/telegramNotifications";
+import SEOHead from "@/components/seo/SEOHead";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -16,22 +18,44 @@ const Contact = () => {
     phone: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend
-    console.log("Form submitted:", formData);
-    toast.success("Thank you for your message! We'll get back to you soon.");
-    setFormData({ name: "", email: "", phone: "", message: "" });
+    setIsSubmitting(true);
+
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill all required fields");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      // Send contact form data to Telegram
+      await sendContactToTelegram(formData);
+      
+      toast.success("Thank you for your message! We'll get back to you soon.");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="flex flex-col w-full">
+      <SEOHead 
+        title="Contact Das Nursery | Get In Touch With Plant Experts"
+        description="Contact Das Nursery for all your plant and gardening needs. We provide plants, seeds, and gardening supplies in Siliguri and bulk orders for Darjeeling, Sikkim, Nepal, Bhutan, and Assam."
+      />
+      
       {/* Hero Section */}
       <section className="pt-32 pb-12 px-6 md:px-12 relative">
         <div className="absolute top-0 right-0 w-full h-full bg-leaf-pattern opacity-5 pointer-events-none" />
@@ -39,7 +63,7 @@ const Contact = () => {
           <Badge variant="outline" className="px-3 py-1 border-leaf-200 bg-leaf-50 text-leaf-700 rounded-full">
             Get in Touch
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-serif font-medium mt-4 mb-4">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl font-serif font-medium mt-4 mb-4">Contact Das Nursery</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Have questions about our plants, services, or need assistance? We're here to help!
           </p>
@@ -62,8 +86,9 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium">Phone</h3>
-                      <p className="text-muted-foreground">+91 9876543210</p>
-                      <p className="text-muted-foreground">Mon-Sat: 9am to 6pm</p>
+                      <p className="text-muted-foreground">+91 7319322612</p>
+                      <p className="text-muted-foreground">+91 7583941787</p>
+                      <p className="text-muted-foreground">Tech Support: +91 7029575619</p>
                     </div>
                   </div>
                   
@@ -73,8 +98,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium">Email</h3>
-                      <p className="text-muted-foreground">info@dasnursery.com</p>
-                      <p className="text-muted-foreground">support@dasnursery.com</p>
+                      <p className="text-muted-foreground">dasnursery001@gmail.com</p>
                     </div>
                   </div>
                   
@@ -84,7 +108,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium">Location</h3>
-                      <p className="text-muted-foreground">123 Green Avenue,</p>
+                      <p className="text-muted-foreground">Mamu More,</p>
                       <p className="text-muted-foreground">Siliguri, West Bengal, 734001</p>
                     </div>
                   </div>
@@ -94,9 +118,9 @@ const Contact = () => {
                       <MessageSquare className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-medium">Telegram Support</h3>
-                      <p className="text-muted-foreground">@DasNurserySiliguri</p>
-                      <p className="text-muted-foreground">Available 24/7 for quick inquiries</p>
+                      <h3 className="font-medium">Delivery Information</h3>
+                      <p className="text-muted-foreground">Free delivery within Siliguri</p>
+                      <p className="text-muted-foreground">Bulk orders only for: Darjeeling, Kurseong, Kalimpong, Mirik, Sikkim, Nepal, Bhutan, and Assam</p>
                     </div>
                   </div>
                 </div>
@@ -186,9 +210,11 @@ const Contact = () => {
                   
                   <Button 
                     type="submit" 
+                    disabled={isSubmitting}
                     className="w-full md:w-auto bg-leaf-500 hover:bg-leaf-600 text-white transition-all duration-300 hover:shadow-leaf"
                   >
-                    <Send className="h-4 w-4 mr-2" /> Send Message
+                    <Send className="h-4 w-4 mr-2" /> 
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </div>
@@ -203,7 +229,7 @@ const Contact = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-serif font-medium mb-4">Visit Our Nursery</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Come and explore our wide collection of plants at our physical nursery in Siliguri.
+              Come and explore our wide collection of plants at our nursery in Mamu More, Siliguri. We offer free delivery within Siliguri and bulk orders for neighboring regions.
             </p>
           </div>
           
