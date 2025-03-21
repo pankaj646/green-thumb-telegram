@@ -34,6 +34,7 @@ const SeedCard = ({ seed }: SeedCardProps) => {
       name: seed.name,
       price: seed.salePrice || seed.regularPrice,
       image: seed.image,
+      category: seed.category,
       type: "seed"
     });
     
