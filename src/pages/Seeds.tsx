@@ -208,7 +208,7 @@ const Seeds = () => {
           onSearch={setSearchQuery}
         />
         
-        <div id="seed-listings" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div id="seed-listings" className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
           {filteredSeeds.length > 0 ? (
             filteredSeeds.map((seed) => (
               <SeedCard key={seed.id} seed={seed} />
